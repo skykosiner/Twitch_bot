@@ -4,7 +4,7 @@ import fs from "fs";
 export function logChat(name: string, message: string): boolean {
     if (name === 'yonikosiner' || name === "nightbot" || name === "StreamElements") return false;
 
-    if (message.length >= 50) return false;
+    if (message.length >= 70) return false;
 
     const msg: string = `${name}: ${message}`;
 
