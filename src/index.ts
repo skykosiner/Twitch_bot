@@ -1,7 +1,7 @@
 import tmi from 'tmi.js';
 import dotenv from 'dotenv';
 import { logChat } from './utils/logChat';
-import hueTest from './utils/hue';
+import { Hue } from './utils/hue';
 
 dotenv.config();
 
@@ -28,7 +28,9 @@ client.on('message', (channel, tags, message, self) => {
   logChat(`${tags.username}`, message);
 
   if (message.includes('Thank you for following')) {
-    hueTest();
+      const hue = new Hue(`${tags.username}`);
+
+      hue.lightsFLICk();
   }
 });
 

@@ -2,7 +2,8 @@ import { Readable } from "stream";
 import fs from "fs";
 
 export function logChat(name: string, message: string): boolean {
-    if (name === 'yonikosiner' || name === "nightbot" || name === "StreamElements") return false;
+
+    if (name === "nightbot" || name === "streamelements") return false;
 
     if (message.length >= 70) return false;
 
