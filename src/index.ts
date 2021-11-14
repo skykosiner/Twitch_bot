@@ -1,39 +1,20 @@
-import tmi from 'tmi.js';
-import dotenv from 'dotenv';
-import { logChat } from './utils/logChat';
-import { Hue } from './utils/hue';
+import IrcClient from "./irc/index";
+import bus from "./message-bus";
+import * as dotenv from "dotenv";
+import { MessageFromYoni, YoniMessage } from "./irc/yoni-commands";
 
 dotenv.config();
 
-const client = new tmi.Client({
-  options: { debug: true },
-  connection: {
-    secure: true,
-    reconnect: true
-  },
-  identity: {
-    username: "yonikosiner",
-    password: process.env.TWITCH_OAUTH_TOKEN
-  },
-  channels: ["yonikosiner"]
-});
-
-client.connect();
-
 //@ts-ignore
-client.on('message', (channel, tags, message, self) => {
-  // Ignore echoed messages.
-  if(self) return;
+const irc = new IrcClient("yonikosiner", process.env.TWITCH_OAUTH_TOKEN.toString());
 
-  logChat(`${tags.username}`, message);
-
-  if (message.includes('Thank you for following')) {
-      const hue = new Hue(`${tags.username}`);
-
-      hue.lightsFLICk();
-  }
+bus.on("connected", function() {
+    console.log("On Connected baybee");
 });
 
-client.on('connected', (address, port) => {
-  console.log(`Connected to ${address}:${port}`);
+bus.on("from-yoni", function(message: MessageFromYoni) {
+    if (message.type === YoniMessage.StartYourEngines) {
+        irc.sendMessage("!start");
+    }
 });
+
