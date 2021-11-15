@@ -22,6 +22,7 @@ const toStringMap = new Map<YoniMessage, string>([
 export type MessageFromYoni = {
     type: YoniMessage,
     displayName: string,
+    time: any,
 }
 
 export function toStringMessageFromYoni(message: MessageFromYoni): string {
@@ -37,12 +38,17 @@ const msgToEmit: {[key: string]: YoniMessage} = {
     "!turn off screen": YoniMessage.displayOff,
 }
 
+function time() {
+    const date = new Date();
+    return `${date.getHours()}:${date.getMinutes()}`;
+}
+
 //@ts-ignore
 export default function Commands(emitter: EventEmitter, tags: IrcTags, message: string): void {
     const type = msgToEmit[message];
     if (type) {
         emitter.emit("from-yoni", {
-            type, displayName: tags["display-name"],
+            type, displayName: tags["display-name"], time: time(),
         });
     }
 }

@@ -29,7 +29,27 @@ bus.on("follow", function(name) {
     hue.lightsFLICk();
 });
 
-bus.on("from-yoni", function(message: MessageFromYoni) {
+function getTime() {
+    const date = new Date();
+    return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+}
+
+let lastCommand: boolean = false;
+
+bus.on("from-yoni", function(message: MessageFromYoni): boolean | void {
+    console.log(lastCommand);
+
+    if (lastCommand) {
+        bus.emit("irc-message", "Sorry you must wait 10 seconds inbetween commands");
+        setTimeout(() => {
+            lastCommand = false;
+        }, 10000);
+    }
+
+    lastCommand = true;
+
+    console.log(lastCommand);
+
     if (message.type === YoniMessage.ASDF) {
         const systemCommand = new SystemCommand(SystemCommands.asdf, SystemCommands.aoeu, 3000);
         systemCommand.ExecuteCommand();
@@ -51,10 +71,6 @@ bus.on("from-yoni", function(message: MessageFromYoni) {
     };
 });
 
-function getTime() {
-    const date = new Date();
-    return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-}
 
 bus.on("asdf", function() {
     console.log(`${getTime()} you in qwerty now mother fucker`);

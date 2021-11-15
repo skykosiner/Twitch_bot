@@ -25,15 +25,6 @@ export default class System {
         this.Length = length;
     }
 
-    private lastComanndTime(): boolean {
-        let lastTime = 0;
-
-        const timeSinceLastFetch = Date.now() - lastTime;
-        if (timeSinceLastFetch <= 60000) return false;
-
-        return true;
-    }
-
     private AproveCommand(): boolean {
         if (this.StartCommand <= 0) return false;
 
@@ -44,7 +35,8 @@ export default class System {
 
     public ExecuteCommand(): void | boolean {
         if (this.AproveCommand() === false) throw new Error("Invalid command");
-        if (this.lastComanndTime() === false) return bus.emit("irc-message", "You can only run a command every 1 minute");
+
+
         switch (this.StartCommand) {
             case SystemCommands.asdf:
                 //@ts-ignore
