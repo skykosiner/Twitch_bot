@@ -2,13 +2,21 @@ import { EventEmitter } from "events";
 import { IrcTags } from ".";
 
 export enum YoniMessage {
-    StartYourEngines = 1,
-    PumpTheBreaks = 2,
+    TurnOn = 1,
+    TurnOff = 2,
+    ASDF = 3,
+    i3Workspace = 4,
+    changeBackground = 5,
+    displayOff = 6,
 }
 
 const toStringMap = new Map<YoniMessage, string>([
-    [YoniMessage.StartYourEngines, "StartYourEngines"],
-    [YoniMessage.PumpTheBreaks, "PumpTheBreaks"],
+    [YoniMessage.TurnOn, "TurnOn"],
+    [YoniMessage.TurnOff, "TurnOff"],
+    [YoniMessage.ASDF, "asdf"],
+    [YoniMessage.i3Workspace, "i3 workspace"],
+    [YoniMessage.changeBackground, "change background"],
+    [YoniMessage.displayOff, "display off"],
 ]);
 
 export type MessageFromYoni = {
@@ -20,8 +28,12 @@ export function toStringMessageFromYoni(message: MessageFromYoni): string {
 }
 
 const msgToEmit: {[key: string]: YoniMessage} = {
-    "!start-program-with-me": YoniMessage.StartYourEngines,
-    "!stop-program-with-me": YoniMessage.PumpTheBreaks,
+    "!turn-on": YoniMessage.TurnOn,
+    "!trun-off": YoniMessage.TurnOff,
+    "asdf": YoniMessage.ASDF,
+    "!i3 workspace": YoniMessage.i3Workspace,
+    "!change background": YoniMessage.changeBackground,
+    "!turn off screen": YoniMessage.displayOff,
 }
 
 
