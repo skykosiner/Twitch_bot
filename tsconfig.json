@@ -2,6 +2,7 @@
     "compilerOptions": {
         "incremental": true,
         "target": "es6",
+        "allowSyntheticDefaultImports": true,
         "module": "commonjs",
         "rootDir": "./src",
         "noImplicitAny": true,

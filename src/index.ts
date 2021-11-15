@@ -1,4 +1,5 @@
 import IrcClient from "./irc/index";
+import logChat from "./logChat";
 import SystemCommand, { SystemCommands } from "./systemCommands/index";
 import bus from "./message-bus";
 import * as dotenv from "dotenv";
@@ -10,7 +11,11 @@ dotenv.config();
 const irc = new IrcClient("yonikosiner", process.env.TWITCH_OAUTH_TOKEN.toString());
 
 bus.on("connected", function() {
-    console.log("On Connected baybee");
+    console.log("We are connected baby 69420 I use dvoark btw");
+});
+
+bus.on("message", function(message) {
+    logChat(message);
 });
 
 bus.on("from-yoni", function(message: MessageFromYoni) {

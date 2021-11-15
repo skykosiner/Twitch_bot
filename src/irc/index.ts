@@ -55,6 +55,11 @@ export default class IrcClientImpl extends EventEmitter implements IrcClient {
             bus.emit("error", e);
         });
 
+        //@ts-ignore
+        this.client.on("message", (channel, tags, message, self) => {
+            bus.emit("message", `${tags.username}: ${message}`);
+        });
+
         bus.on("irc-message", (msg: string) => {
             console.log("IRC#irc-message", msg);
             this.say(msg);

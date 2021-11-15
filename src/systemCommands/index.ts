@@ -43,8 +43,8 @@ export default class System {
                 asdf = exec("setxkbmap -layout us", (error) => {
                     if (error) {
                         console.error(`exec error: ${error}`);
-                        return;
-                    }
+                        throw new Error(`${error}`);
+                    };
                 });
                 bus.emit("asdf");
                 break;
@@ -55,9 +55,8 @@ export default class System {
 
                 i3 = exec("i3 workspace 10", (error) => {
                     if (error) {
-                        console.error(`exec error: ${error}`);
-                        return;
-                    }
+                        throw new Error(`${error}`);
+                    };
                 });
                 bus.emit("i3-workspace");
             break;
@@ -67,9 +66,8 @@ export default class System {
 
                 changeWallpaper = exec("change_background_random", (error) => {
                     if (error) {
-                        console.error(`exec error: ${error}`);
-                        return;
-                    }
+                        throw new Error(`${error}`);
+                    };
                 });
                 bus.emit("change-wallpaper");
             break;
@@ -79,9 +77,8 @@ export default class System {
 
                 turnOffMonitor = exec("xrandr --output HDMI-1 --brightness 0", (error) => {
                     if (error) {
-                        console.error(`exec error: ${error}`);
-                        return;
-                    }
+                        throw new Error(`${error}`);
+                    };
                 });
 
                 bus.emit("display-off");
@@ -96,9 +93,8 @@ export default class System {
                     let child;
                     child =  exec("setxkbmap -layout real-prog-dvorak", (error) => {
                         if (error) {
-                            console.error(`exec error: ${error}`);
-                            return;
-                        }
+                            throw new Error(`${error}`);
+                        };
                     });
                     bus.emit("aoeu");
                 break;
@@ -108,9 +104,8 @@ export default class System {
 
                     turnOnMonitor = exec("xrandr --output HDMI-1 --brightness 1", (error) => {
                         if (error) {
-                            console.error(`exec error: ${error}`);
-                            return;
-                        }
+                            throw new Error(`${error}`);
+                        };
                     });
 
                     bus.emit("display-on");
