@@ -10,6 +10,9 @@ import bus from "../message-bus";
     //ct: number;
 //}
 
+//TODO: add a way to get the current state of the light and change back to that
+//state after turn on and off
+
 export class Hue {
     //On no a local ip on github whatever will you do?
     private static baseURL: string = "http://10.0.0.23/api/vGeourmApBqx37QJaJUQ4AxboqUjli1Fj3LtTQdY/";
