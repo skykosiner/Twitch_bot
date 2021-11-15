@@ -1,14 +1,14 @@
 import axios from "axios";
 import bus from "../message-bus";
 
-interface lightState {
-    on: boolean;
-    bri: number;
-    hue: number;
-    sat: number;
-    xy: number[];
-    ct: number;
-}
+//interface lightState {
+    //on: boolean;
+    //bri: number;
+    //hue: number;
+    //sat: number;
+    //xy: number[];
+    //ct: number;
+//}
 
 export class Hue {
     //On no a local ip on github whatever will you do?
@@ -18,13 +18,6 @@ export class Hue {
 
     constructor(name: string) {
         this.name = name;
-    };
-
-    private async getLightState(light: number) {
-        let url = Hue.baseURL + "lights/" + light;
-        let response: { data: { state: lightState }}  = await axios.get(url);
-
-        return response.data.state;
     };
 
     private async turnOn(light: number): Promise<any> {
@@ -41,32 +34,19 @@ export class Hue {
 
     public async lightsFLICk(): Promise<boolean | void> {
 
-        if (this.name !== "yonikosiner") {
+        if (this.name !== "StreamElements") {
            return bus.emit("irc-message", "You aint a bot get out only stream elements can do that baby");
         };
-
-        const lightStateLocal: boolean[] = [];
-
-        this.lights.map(async (light: number) => {
-            let lightState: lightState = await this.getLightState(light);
-            lightStateLocal.push(lightState.on);
-        });
 
         for (let light of this.lights) {
             await this.turnOn(light)
 
             setTimeout(async () => {
                 await this.turnOff(light);
+                setTimeout(async () => {
+                    await this.turnOn(light);
+                }, 3000);
             }, 3000);
-
         };
-
-        lightStateLocal.map((state: boolean, index: number) => {
-            if (state) {
-                this.turnOn(this.lights[index]);
-            } else {
-                this.turnOff(this.lights[index]);
-            };
-        });
     };
 };
