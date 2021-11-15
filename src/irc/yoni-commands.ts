@@ -21,6 +21,7 @@ const toStringMap = new Map<YoniMessage, string>([
 
 export type MessageFromYoni = {
     type: YoniMessage,
+    displayName: string,
 }
 
 export function toStringMessageFromYoni(message: MessageFromYoni): string {
@@ -36,16 +37,12 @@ const msgToEmit: {[key: string]: YoniMessage} = {
     "!turn off screen": YoniMessage.displayOff,
 }
 
-
+//@ts-ignore
 export default function Commands(emitter: EventEmitter, tags: IrcTags, message: string): void {
-    if (tags["display-name"] === "yonikosiner") {
-
-        const type = msgToEmit[message];
-        if (type) {
-            emitter.emit("from-yoni", {
-                type,
-            });
-        }
+    const type = msgToEmit[message];
+    if (type) {
+        emitter.emit("from-yoni", {
+            type, displayName: tags["display-name"],
+        });
     }
 }
-

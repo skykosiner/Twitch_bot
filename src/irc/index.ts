@@ -57,6 +57,7 @@ export default class IrcClientImpl extends EventEmitter implements IrcClient {
 
         //@ts-ignore
         this.client.on("message", (channel, tags, message, self) => {
+            if (message.startsWith("Thank you for following")) return bus.emit("follow", tags["display-name"]);
             bus.emit("message", `${tags.username}: ${message}`);
         });
 
@@ -76,7 +77,7 @@ export default class IrcClientImpl extends EventEmitter implements IrcClient {
             return;
         } else if (this.state === IrcState.Errored) {
             throw new Error("Cannot send messages, IRC errored.");
-        }
+        };
 
         console.log("IRC#say", str);
         this.client.say(channel, str);
@@ -84,6 +85,5 @@ export default class IrcClientImpl extends EventEmitter implements IrcClient {
 
     registerEmitter(emitter: Emitter): void {
         this.emitters.push(emitter);
-    }
-}
-
+    };
+};

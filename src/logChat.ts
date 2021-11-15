@@ -14,6 +14,10 @@ export default function logChat(message: string): boolean {
 
     if (msg[0] === "streamelemetns:" || msg[0] === "nightbot:" || msg[0] === "yonikosiner:") return false;
 
+    /*Get anything that is a command out (commands normaly start with ! sorry
+    if your message has a ! in it before the first space)*/
+    if (msg[1].includes("!")) return false;
+
     const readable = Readable.from([`${message}\n`]);
     const writeStream = createWriteStream('/home/yoni/chat.txt');
 
