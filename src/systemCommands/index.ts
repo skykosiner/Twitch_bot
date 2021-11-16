@@ -77,7 +77,7 @@ export default class System {
                 //@ts-ignore
                 let turnOffMonitor;
 
-                turnOffMonitor = exec("xrandr --output HDMI-1 --brightness 0", (error) => {
+                turnOffMonitor = exec("xrandr --output HDMI-1 --brightness 0.05", (error) => {
                     if (error) {
                         throw new Error(`${error}`);
                     };

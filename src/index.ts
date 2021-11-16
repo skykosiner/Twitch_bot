@@ -1,5 +1,6 @@
 import IrcClient from "./irc/index";
 import logChat from "./logChat";
+import TCP from "./tcp";
 import SystemCommand, { SystemCommands } from "./systemCommands/index";
 import bus from "./message-bus";
 import * as dotenv from "dotenv";
@@ -8,11 +9,26 @@ import { Hue } from "./hue/index";
 
 dotenv.config();
 
+function getTime() {
+    const date = new Date();
+    return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+}
+
 //@ts-ignore
 const irc = new IrcClient("controlmycomputerbaby", process.env.TWITCH_OAUTH_TOKEN.toString());
+const tcp = new TCP(42069);
+
+tcp.on("listening", function() {
+    console.log("TCP server listening on port 42069");
+});
+
+tcp.on("connection", function() {
+    console.log(`${getTime()} connection baby`);
+    tcp.write("ggVGdd");
+});
 
 bus.on("connected", function() {
-    console.log("We are connected baby 69420 I use dvoark btw");
+    console.log("We are connected baby 69420 I use dvorak btw");
 });
 
 bus.on("error", function(err) {
@@ -29,16 +45,10 @@ bus.on("follow", function(name) {
     hue.lightsFLICk();
 });
 
-function getTime() {
-    const date = new Date();
-    return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-}
 
 let lastCommand: boolean = false;
 
 bus.on("from-yoni", function(message: MessageFromYoni): boolean | void {
-    console.log(lastCommand);
-
     if (lastCommand) {
         bus.emit("irc-message", "Sorry you must wait 10 seconds inbetween commands");
         setTimeout(() => {

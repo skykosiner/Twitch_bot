@@ -46,6 +46,7 @@ function time() {
 //@ts-ignore
 export default function Commands(emitter: EventEmitter, tags: IrcTags, message: string): void {
     const type = msgToEmit[message];
+
     if (type) {
         emitter.emit("from-yoni", {
             type, displayName: tags["display-name"], time: time(),
