@@ -12,7 +12,7 @@ export default function logChat(message: string): boolean {
     if (message.length >= 70) return false;
     let msg: string[] = message.split(" ");
 
-    if (msg[0] === "streamelemetns:" || msg[0] === "nightbot:" || msg[0] === "yonikosiner:") return false;
+    if (msg[0] === "StreamelEmetns:" || msg[0] === "Nightbot:" || msg[0] === "yonikosiner:") return false;
 
     /*Get anything that is a command out (commands normaly start with ! sorry
     if your message has a ! in it before the first space)*/

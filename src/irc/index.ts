@@ -55,19 +55,19 @@ export default class IrcClientImpl extends EventEmitter implements IrcClient {
             bus.emit("error", e);
         });
 
-        //@ts-ignore
-        this.client.on("message", (channel, tags, message, self) => {
-            if (message.startsWith("Thank you for following")) return bus.emit("follow", tags["display-name"]);
-            bus.emit("message", `${tags.username}: ${message}`);
-        });
-
         bus.on("irc-message", (msg: string) => {
             console.log("IRC#irc-message", msg);
             this.say(msg);
         });
 
-        this.client.on("message", (_: string, tags: IrcTags, message: string) => {
+        this.client.on("message", (_: string, tags: IrcTags, message: string): boolean | void => {
+            if (message.startsWith("Thank you for following")) return bus.emit("follow", tags["display-name"]);
+            if (message.startsWith("!va")) return bus.emit("vim after", { username: tags["display-name"], message });
+            if (message.startsWith("!vi")) return bus.emit("vim insert", { username: tags["display-name"], message });
+            if (message.startsWith("!vc")) return bus.emit("vim command", { username: tags["display-name"], message });
+            if (message.startsWith("!:")) return bus.emit("vim command col", { username: tags["display-name"], message });
             this.emitters.forEach(e => e(bus, tags, message));
+            bus.emit("message", `${tags["display-name"]}: ${message}`);
         });
     }
 

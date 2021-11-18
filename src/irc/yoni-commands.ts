@@ -22,7 +22,7 @@ const toStringMap = new Map<YoniMessage, string>([
 export type MessageFromYoni = {
     type: YoniMessage,
     displayName: string,
-    time: any,
+    time: Date,
 }
 
 export function toStringMessageFromYoni(message: MessageFromYoni): string {

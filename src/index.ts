@@ -1,16 +1,19 @@
 import IrcClient from "./irc/index";
 import logChat from "./logChat";
 import TCP from "./tcp";
-import SystemCommand, { SystemCommands } from "./systemCommands/index";
+import getData from "./get-data";
+import SystemCommand, { CommandType, SystemCommand as sys } from "./systemCommands/index";
 import bus from "./message-bus";
 import * as dotenv from "dotenv";
 import { MessageFromYoni, YoniMessage } from "./irc/yoni-commands";
 import { Hue } from "./hue/index";
+import Command, { CommandType as cmdT } from "./cmd";
+import getType from "./get-type";
 
 dotenv.config();
 
-function getTime() {
-    const date = new Date();
+function getTime(): string {
+    const date: Date = new Date();
     return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
 }
 
@@ -23,8 +26,76 @@ tcp.on("listening", function() {
 });
 
 tcp.on("connection", function() {
-    console.log(`${getTime()} connection baby`);
-    tcp.write("ggVGdd");
+    console.log(`${getTime()} connection baby to that tcp girl`);
+});
+
+interface VimMessage {
+    username: string,
+    message: string,
+}
+
+bus.on("vim after", function(data: VimMessage) {
+    const msg: string = data.message.substring(3);
+    const va: sys = {
+        username: data.username,
+        message: msg,
+        //@ts-ignore
+        commandType: cmdT.VimAfter,
+    };
+
+    console.log("data", va);
+    tcp.write(new Command().reset()
+              .setData(getData(va))
+              .setType(getType(va)).buffer
+             );
+});
+
+bus.on("vim insert", function(data: VimMessage) {
+    const msg: string = data.message.substring(3);
+    const vi: sys = {
+        username: data.username,
+        message: msg,
+        //@ts-ignore
+        commandType: cmdT.VimInsert,
+    };
+
+    console.log("data", vi);
+    tcp.write(new Command().reset()
+              .setData(getData(vi))
+              .setType(getType(vi)).buffer
+             );
+});
+
+bus.on("vim command", function(data: VimMessage) {
+    const msg: string = data.message.substring(3);
+    const vc: sys = {
+        username: data.username,
+        message: msg,
+        //@ts-ignore
+        commandType: cmdT.VimCommand,
+    };
+
+    console.log("data", vc);
+    tcp.write(new Command().reset()
+              .setData(getData(vc))
+              .setType(getType(vc)).buffer
+             );
+});
+
+bus.on("vim command col", function(data: VimMessage) {
+    const msg: string = data.message.substring(3);
+    const vc: sys = {
+        username: data.username,
+        message: msg,
+        //@ts-ignore
+        commandType: cmdT.VimColon,
+    };
+
+    console.log("data", vc);
+    tcp.write(new Command().reset()
+              .setData(getData(vc))
+              .setType(getType(vc)).buffer
+             );
 });
 
 bus.on("connected", function() {
@@ -61,22 +132,22 @@ bus.on("from-yoni", function(message: MessageFromYoni): boolean | void {
     console.log(lastCommand);
 
     if (message.type === YoniMessage.ASDF) {
-        const systemCommand = new SystemCommand(SystemCommands.asdf, SystemCommands.aoeu, 3000);
+        const systemCommand = new SystemCommand(CommandType.asdf, CommandType.aoeu, 3000);
         systemCommand.ExecuteCommand();
     };
 
     if (message.type === YoniMessage.i3Workspace) {
-        const systemCommand = new SystemCommand(SystemCommands.i3Workspace);
+        const systemCommand = new SystemCommand(CommandType.i3Workspace);
         systemCommand.ExecuteCommand();
     };
 
     if (message.type === YoniMessage.changeBackground) {
-        const systemCommand = new SystemCommand(SystemCommands.changeWallpaper);
+        const systemCommand = new SystemCommand(CommandType.changeWallpaper);
         systemCommand.ExecuteCommand();
     };
 
     if (message.type === YoniMessage.displayOff) {
-        const systemCommand = new SystemCommand(SystemCommands.turnOffMonitor, SystemCommands.turnOnMonitor, 5000);
+        const systemCommand = new SystemCommand(CommandType.turnOffMonitor, CommandType.turnOnMonitor, 5000);
         systemCommand.ExecuteCommand();
     };
 });

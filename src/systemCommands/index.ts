@@ -1,25 +1,33 @@
 import bus from "../message-bus";
 import { exec } from "child_process";
+import { CommandType as cmd } from "../cmd";
 
-export enum SystemCommands {
-    //Will change my keyboard into qwerty (I use dvorak btw. It is for 5 seconds)
-    "asdf" = 1,
-    "aoeu" = 2,
+export enum CommandType {
+    //Will change my keyboard into qwerty (I use dvorak btw. It is for 3 seconds)
+    asdf = 1,
+    aoeu = 2,
     //Will change my i3 workspace
-    "i3Workspace" = 3,
+    i3Workspace = 3,
     //Change my wallpaper
-    "changeWallpaper" = 4,
+    changeWallpaper = 4,
     //Turn off my monitor (5 seconds)
-    "turnOffMonitor" = 5,
-    "turnOnMonitor" = 6,
+    turnOffMonitor = 5,
+    turnOnMonitor = 6,
+    SystemCommand = 7,
 }
 
+export type SystemCommand = {
+    username: string,
+    message: string,
+    commandType: cmd,
+};
+
 export default class System {
-    private StartCommand: SystemCommands;
-    private EndCommand: SystemCommands;
+    private StartCommand: CommandType;
+    private EndCommand: CommandType;
     private Length: number;
 
-    constructor(startCommand: SystemCommands, endCommand?: SystemCommands, length?: number,) {
+    constructor(startCommand: CommandType, endCommand?: CommandType, length?: number,) {
         this.StartCommand = startCommand;
         this.EndCommand = endCommand;
         this.Length = length;
@@ -38,7 +46,7 @@ export default class System {
 
 
         switch (this.StartCommand) {
-            case SystemCommands.asdf:
+            case CommandType.asdf:
                 //@ts-ignore
                 //Turn that bad boy into qwerty
                 let asdf;
@@ -50,7 +58,7 @@ export default class System {
                 });
                 bus.emit("asdf");
                 break;
-            case SystemCommands.i3Workspace:
+            case CommandType.i3Workspace:
                 //@ts-ignore
                 //Change my workspace to 10 as I don't ever use 10
                 let i3;
@@ -62,7 +70,7 @@ export default class System {
                 });
                 bus.emit("i3-workspace");
             break;
-            case SystemCommands.changeWallpaper:
+            case CommandType.changeWallpaper:
                 //@ts-ignore
                 let changeWallpaper;
 
@@ -73,7 +81,7 @@ export default class System {
                 });
                 bus.emit("change-wallpaper");
             break;
-            case SystemCommands.turnOffMonitor:
+            case CommandType.turnOffMonitor:
                 //@ts-ignore
                 let turnOffMonitor;
 
@@ -89,7 +97,7 @@ export default class System {
 
         setTimeout(() => {
             switch (this.EndCommand) {
-                case SystemCommands.aoeu:
+                case CommandType.aoeu:
                     //@ts-ignore
                     //Back into dvorak baby
                     let child;
@@ -100,7 +108,7 @@ export default class System {
                     });
                     bus.emit("aoeu");
                 break;
-                case SystemCommands.turnOnMonitor:
+                case CommandType.turnOnMonitor:
                     //@ts-ignore
                     let turnOnMonitor;
 
