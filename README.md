@@ -3,3 +3,5 @@
 ## Cooler stuff
 * You can run custom commands to change my i3 workspace, keyboard layout,
   background, and turn of my montior
+## EVEN COOLER STUFF
+* Yeah you can control my vim baby all avalibe commands in commands.md
