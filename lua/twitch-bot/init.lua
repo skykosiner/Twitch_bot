@@ -1,6 +1,14 @@
 local TCP = require("twitch-bot.tcp");
 local Pobo = require("twitch-bot.pobo");
+local Enum = require("twitch-bot.enum");
 local EnvClient = require("twitch-bot.envelope");
+
+local CommandTypes = Enum({
+    VimCommand = 0,
+    SystemCommand = 1,
+    VimInsert = 2,
+    VimAfter = 3,
+})
 
 local M = {}
 
@@ -13,22 +21,11 @@ function M.init()
         print("Connected to the server")
     end)
 
-    M._env:on("data", function(data)
-        local function dataToString(data)
-           return string.format("%s", table.concat(data, '') )
-        end
+    M._env:on("data", function(line)
+        local pobo = Pobo:new(line, 1)
 
-        local function asciiToString(data)
-            local str = ""
-            for i = 1, #data do
-                str = str .. string.format("%c", data[i])
-            end
-            return str
-        end
-
-        vim.cmd("norm " .. asciiToString(data))
-
-        print(asciiToString(data))
+        local cmd = pobo:get_data()
+        vim.cmd(cmd)
     end)
 end
 
