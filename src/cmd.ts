@@ -11,7 +11,6 @@ export enum CommandType {
     SystemCommand = 2,
     VimInsert = 3,
     VimAfter = 4,
-    VimColon = 5,
 }
 
 const typeToString: Map<CommandType, string> = new Map([
@@ -19,7 +18,6 @@ const typeToString: Map<CommandType, string> = new Map([
     [CommandType.VimInsert, "VimInsert"],
     [CommandType.VimAfter, "VimAfter"],
     [CommandType.SystemCommand, "SystemCommand"],
-    [CommandType.VimColon, "VimColon"],
 ]);
 
 export function commandToString(type: CommandType): string {

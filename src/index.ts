@@ -3,6 +3,8 @@ import logChat from "./logChat";
 import TCP from "./tcp";
 import getData from "./get-data";
 import SystemCommand, { CommandType, SystemCommand as sys } from "./systemCommands/index";
+import validateVimCommand from "./vim-commands"
+import validate, { addValidator } from "./validation";
 import bus from "./message-bus";
 import * as dotenv from "dotenv";
 import { MessageFromYoni, YoniMessage } from "./irc/yoni-commands";
@@ -34,14 +36,21 @@ interface VimMessage {
     message: string,
 }
 
-bus.on("vim after", function(data: VimMessage) {
-    const msg: string = data.message.substring(3);
+addValidator(validateVimCommand);
+
+bus.on("vim after", function(data: VimMessage): boolean | void {
+    let msg: string = data.message.substring(3);
+
     const va: sys = {
         username: data.username,
-        message: msg,
+        message: msg.trim(),
         //@ts-ignore
         commandType: cmdT.VimAfter,
     };
+
+    const validationResult = validate(va);
+
+    if (!validationResult.success) return console.log("error", validationResult.error);
 
     console.log("data", va);
     tcp.write(new Command().reset()
@@ -54,10 +63,14 @@ bus.on("vim insert", function(data: VimMessage) {
     const msg: string = data.message.substring(3);
     const vi: sys = {
         username: data.username,
-        message: msg,
+        message: msg.trim(),
         //@ts-ignore
         commandType: cmdT.VimInsert,
     };
+
+    const validationResult = validate(vi);
+
+    if (!validationResult.success) return console.log("error", validationResult.error);
 
     console.log("data", vi);
     tcp.write(new Command().reset()
@@ -70,26 +83,14 @@ bus.on("vim command", function(data: VimMessage) {
     const msg: string = data.message.substring(3);
     const vc: sys = {
         username: data.username,
-        message: msg,
+        message: msg.trim(),
         //@ts-ignore
         commandType: cmdT.VimCommand,
     };
 
-    console.log("data", vc);
-    tcp.write(new Command().reset()
-              .setData(getData(vc))
-              .setType(getType(vc)).buffer
-             );
-});
+    const validationResult = validate(vc);
 
-bus.on("vim command col", function(data: VimMessage) {
-    const msg: string = data.message.substring(3);
-    const vc: sys = {
-        username: data.username,
-        message: msg,
-        //@ts-ignore
-        commandType: cmdT.VimColon,
-    };
+    if (!validationResult.success) return console.log("error", validationResult.error);
 
     console.log("data", vc);
     tcp.write(new Command().reset()

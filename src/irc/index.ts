@@ -65,7 +65,6 @@ export default class IrcClientImpl extends EventEmitter implements IrcClient {
             if (message.startsWith("!va")) return bus.emit("vim after", { username: tags["display-name"], message });
             if (message.startsWith("!vi")) return bus.emit("vim insert", { username: tags["display-name"], message });
             if (message.startsWith("!vc")) return bus.emit("vim command", { username: tags["display-name"], message });
-            if (message.startsWith("!:")) return bus.emit("vim command col", { username: tags["display-name"], message });
             this.emitters.forEach(e => e(bus, tags, message));
             bus.emit("message", `${tags["display-name"]}: ${message}`);
         });

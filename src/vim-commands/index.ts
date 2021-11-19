@@ -1,6 +1,7 @@
 import getType from "../get-type";
 import { SystemCommand } from "../systemCommands";
 import { CommandType } from "../cmd";
+import { ValidationResult } from "~/validation";
 
 type TieredCommand = {
     name: string | ((input: string) => boolean),
@@ -78,11 +79,6 @@ const NamedCommands: TieredCommand[] = [{
     }
 }];
 
-function printCharacters(data: SystemCommand): void {
-    console.log(`${data.username}:`, data.message.split("").map(x => x.charCodeAt(0)));
-
-}
-
 function hasBadCharacters(str: string): boolean {
     return Boolean(str.split("").
         map(x => x.charCodeAt(0)).
@@ -94,7 +90,6 @@ function convertEscapeCharacters(str: string): string {
 }
 
 function insert(data: SystemCommand): string {
-    printCharacters(data);
     if (hasBadCharacters(data.message)) {
         return "You cannot use 32 < ascii > 127";
     }
@@ -120,10 +115,10 @@ function vimCommand(data: SystemCommand): string {
         return "";
     }
 
-    return `You cannot use ${data.message}`;
+    return `You cannot use ${data.message} as it is not a valid command`;
 }
 
-export default function validateVimCommand(data: SystemCommand): object {
+export default function validateVimCommand(data: SystemCommand): ValidationResult {
     const type = getType(data);
 
     let error: string = "";

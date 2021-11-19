@@ -16,9 +16,6 @@ export default function getData(data: SystemCommand): null | Buffer {
             out = Buffer.from(`norm ${data.message}`);
         break;
 
-        case CommandType.VimColon:
-            out = Buffer.from(`:${data.message}`);
-
         case CommandType.SystemCommand:
             out = Buffer.from(`silent! !${data.message}`);
         break;
