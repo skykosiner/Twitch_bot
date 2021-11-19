@@ -8,7 +8,7 @@ import validate, { addValidator } from "./validation";
 import bus from "./message-bus";
 import * as dotenv from "dotenv";
 import { MessageFromYoni, YoniMessage } from "./irc/yoni-commands";
-import { Hue } from "./hue/index";
+import { Hue } from "./hue";
 import Command, { CommandType as cmdT } from "./cmd";
 import getType from "./get-type";
 
