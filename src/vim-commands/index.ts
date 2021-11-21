@@ -1,6 +1,5 @@
 import getType from "../get-type";
-import { SystemCommand } from "../systemCommands";
-import { CommandType } from "../cmd";
+import { CommandType, SystemCommand } from "../cmd";
 import { ValidationResult } from "~/validation";
 
 type TieredCommand = {

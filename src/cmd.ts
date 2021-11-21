@@ -6,11 +6,19 @@ const zeroBuf = Buffer.alloc(bufferLength).fill(0);
 //     |     type      |     data     |
 //     +---------------+--------------+
 
+export type SystemCommand = {
+    username: string,
+    message: string,
+    commandType: CommandType,
+};
+
 export enum CommandType {
     VimCommand = 1,
     SystemCommand = 2,
     VimInsert = 3,
     VimAfter = 4,
+    xrandr = 5,
+    asdf = 6,
 }
 
 const typeToString: Map<CommandType, string> = new Map([

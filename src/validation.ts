@@ -1,4 +1,4 @@
-import { SystemCommand } from "./systemCommands";
+import { SystemCommand } from "./cmd";
 
 export type ValidationResult = {
     success: boolean;

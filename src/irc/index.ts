@@ -3,6 +3,7 @@ import bus from "../message-bus";
 import Commands, { MessageFromYoni } from "./yoni-commands";
 
 import * as tmi from "tmi.js";
+import SysCommands from "./system-command";
 
 enum IrcState {
     Waiting = 1,
@@ -32,6 +33,7 @@ export default class IrcClientImpl extends EventEmitter implements IrcClient {
         this.state = IrcState.Waiting;
         this.emitters = [
             Commands,
+            SysCommands,
         ];
 
         this.client = new tmi.Client({
@@ -65,6 +67,7 @@ export default class IrcClientImpl extends EventEmitter implements IrcClient {
             if (message.startsWith("!va")) return bus.emit("vim after", { username: tags["display-name"], message });
             if (message.startsWith("!vi")) return bus.emit("vim insert", { username: tags["display-name"], message });
             if (message.startsWith("!vc")) return bus.emit("vim command", { username: tags["display-name"], message });
+            if (message.startsWith("!commands")) return bus.emit("irc-message", `@${tags["display-name"]} You can find the commands for the bot at https://github.com/yonikosiner/Twitch_bot/blob/master/commands.md`);
             this.emitters.forEach(e => e(bus, tags, message));
             bus.emit("message", `${tags["display-name"]}: ${message}`);
         });
