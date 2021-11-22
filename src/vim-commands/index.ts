@@ -1,6 +1,5 @@
 import getType from "../get-type";
-import { SystemCommand } from "../systemCommands";
-import { CommandType } from "../cmd";
+import { CommandType, SystemCommand } from "../cmd";
 import { ValidationResult } from "~/validation";
 
 type TieredCommand = {
@@ -90,7 +89,7 @@ function convertEscapeCharacters(str: string): string {
 
 function insert(data: SystemCommand): string {
     if (hasBadCharacters(data.message)) {
-        return "You cannot use 32 < ascii > 127";
+        return `You cannot use 32 < ascii > 127 ${data.username}`;
     }
 
     data.message= convertEscapeCharacters(data.message);

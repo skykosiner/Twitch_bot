@@ -10,7 +10,7 @@ import bus from "../message-bus";
     //ct: number;
 //}
 
-//TODO: add a way to get the current state of the light and change back to that
+//TODO(yoni): add a way to get the current state of the light and change back to that
 //state after turn on and off
 
 export class Hue {

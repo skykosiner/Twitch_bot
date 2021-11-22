@@ -1,5 +1,4 @@
-import { SystemCommand } from "./systemCommands";
-import { CommandType } from "./cmd";
+import { CommandType, SystemCommand } from "./cmd";
 import getType from "./get-type";
 
 export default function getData(data: SystemCommand): null | Buffer {
@@ -17,7 +16,7 @@ export default function getData(data: SystemCommand): null | Buffer {
         break;
 
         case CommandType.SystemCommand:
-            out = Buffer.from(`silent! !${data.message}`);
+            out = Buffer.from(`$silent! !${data.message}`);
         break;
     }
     return out;

@@ -1,4 +1,4 @@
-import { SystemCommand } from "./systemCommands";
+import { SystemCommand } from "./cmd";
 
 export type ValidationResult = {
     success: boolean;
@@ -26,5 +26,3 @@ export default function validate(data: SystemCommand): ValidationResult | null {
 
     return out;
 }
-
-
