@@ -5,6 +5,8 @@ import { IrcTags } from ".";
 const toStringMap = new Map<CommandType, string>([
     [CommandType.asdf, "asdf"],
     [CommandType.xrandr, "display off"],
+    [CommandType.changeBackground, "change background"],
+    [CommandType.i3Workspace, "i3 workspace"],
 ]);
 
 export function toStringMessageForSys(message: SystemCommand): string {
@@ -14,6 +16,8 @@ export function toStringMessageForSys(message: SystemCommand): string {
 const msgToEmit: {[key: string]: CommandType} = {
     "asdf": CommandType.asdf,
     "!turn off screen": CommandType.xrandr,
+    "!change background": CommandType.changeBackground,
+    "!i3 workspace": CommandType.i3Workspace,
 }
 
 //@ts-ignore

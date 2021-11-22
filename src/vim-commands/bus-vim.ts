@@ -11,14 +11,14 @@ interface VimMessage {
 }
 
 export default function vimBus(tcp: TCPSocket): void {
-    bus.on("vim after", function(data: VimMessage): boolean | void {
+    bus.on("vim", function(data: VimMessage): boolean | void {
         let msg: string = data.message.substring(3);
 
         const va: SystemCommand = {
             username: data.username,
             message: msg.trim(),
             //@ts-ignore
-            commandType: cmdT.VimAfter,
+            commandType: getType(data),
         };
 
         const validationResult = validate(va);
@@ -28,8 +28,8 @@ export default function vimBus(tcp: TCPSocket): void {
         console.log("data", va);
         tcp.write(new Command().reset()
                   .setData(getData(va))
+                  .setStatusLine(`${data.username} has done ${data.message} into vim`)
                   .setType(getType(va)).buffer
                  );
     });
-
 };

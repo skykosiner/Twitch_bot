@@ -1,10 +1,10 @@
 const bufferLength = 1 + 50 + 2 + 200;
 const zeroBuf = Buffer.alloc(bufferLength).fill(0);
 
-//            1             2..
-//     +---------------+--------------+
-//     |     type      |     data     |
-//     +---------------+--------------+
+//            1             2 - 51        52 - 53     ?54 - ...?
+//     +---------------+---------------+------------+------------------+
+//     |     type      |   statusline  |    cost    | data ...         |
+//     +---------------+---------------+------------+------------------+
 
 export type SystemCommand = {
     username: string,
@@ -19,6 +19,9 @@ export enum CommandType {
     VimAfter = 4,
     xrandr = 5,
     asdf = 6,
+    StatusUpdate = 7,
+    changeBackground = 8,
+    i3Workspace = 9,
 }
 
 const typeToString: Map<CommandType, string> = new Map([
@@ -33,6 +36,8 @@ export function commandToString(type: CommandType): string {
 }
 
 const typeIdx = 0;
+const statuslineIdx = 1;
+const costIdx = 51;
 const dataIdx = 53;
 
 export default class Command {
@@ -54,6 +59,20 @@ export default class Command {
         this._buffer[typeIdx] = type;
         return this;
     }
+
+    setStatusLine(status: string): Command {
+        if (status.length > 50) {
+            throw new Error("Status line can only go up to 50 you dumb fuck");
+        }
+        Buffer.from(status).copy(this._buffer, statuslineIdx);
+        return this;
+    }
+
+    setCost(cost: number): Command {
+        this._buffer.writeUInt16BE(cost, costIdx);
+        return this;
+    }
+
 
     setData(data: Buffer | null): Command {
         if (data === null) {

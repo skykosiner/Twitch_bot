@@ -6,12 +6,15 @@ export default class SystemCommand {
     private stopTime: number;
     private timerId: ReturnType<typeof setInterval>;
 
-    constructor(private onCommand: string, private offCommand: string,
-                private commandLength: number) {
+    constructor(private onCommand: string, private offCommand: string | null,
+                private commandLength: number | null) {
         this.stopTime = 0;
     }
 
-    add(message: sys) {
+    add(message: sys): boolean | void {
+        if (this.offCommand === null) {
+            return bus.emit("system-command", this.onCommand, message);
+        }
         const now = dateNow();
         if (now > this.stopTime) {
             bus.emit("system-command", this.onCommand, message);

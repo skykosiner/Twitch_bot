@@ -6,18 +6,20 @@ import getTime from "./get-time";
 import bus from "./message-bus";
 import validateVimCommand from "./vim-commands"
 import validate, { addValidator } from "./validation";
-import vimBus from "./vim-commands/bus-vim";
 import logChat from "./logChat";
 import { Hue } from "./hue";
 import Command, { CommandType } from "./cmd";
 import getType from "./get-type";
 import IrcClient from "./irc";
+import getData from "./get-data";
 
 dotenv.config();
 
 const systemCommands: {[key: string]: System} = {
     "asdf": new System("setxkbmap -layout us", "setxkbmap -layout real-prog-dvorak", 3000),
     "!turn off screen": new System("xrandr --output HDMI-1 --brightness 0.05", "xrandr --output HDMI-1 --brightness 1", 5000),
+    "!i3 workspace": new System("i3 workspace 10", null, null),
+    "!change background": new System("change_background_random", null, null),
 };
 
 //@ts-ignore
@@ -34,7 +36,32 @@ tcp.on("connection", function() {
 
 addValidator(validateVimCommand);
 
-vimBus(tcp);
+interface VimMessage {
+    username: string,
+    message: string,
+}
+
+bus.on("vim", function(data: VimMessage): boolean | void {
+    let msg: string = data.message.substring(3);
+
+    const va: SystemCommand = {
+        username: data.username,
+        message: msg.trim(),
+        //@ts-ignore
+        commandType: getType(data),
+    };
+
+    const validationResult = validate(va);
+
+    if (!validationResult.success) return console.log("error", validationResult.error);
+
+    console.log("data", va);
+    tcp.write(new Command().reset()
+              .setData(getData(va))
+              .setStatusLine(`${data.username} has done ${data.message} into vim`)
+              .setType(getType(va)).buffer
+             );
+});
 
 bus.on("connected", function() {
     console.log("We are connected baby 69420 I use dvorak btw");
@@ -59,6 +86,7 @@ bus.on("system-command", function(command: string, message: SystemCommand) {
 
     tcp.write(new Command().reset()
           .setData(Buffer.from(`silent! !${command}`))
+          .setStatusLine(`it worked baby ${command}`)
           .setType(getType(message)).buffer
      );
 });
@@ -67,7 +95,12 @@ bus.on("start-sys", function(data: SystemCommand): void {
     console.log("systemCommands", data);
     const validationResult = validate(data);
 
-    if (!validationResult.success) return console.log(`there was a error ${validationResult.error}`)
+    if (!validationResult.success) {
+        tcp.write(new Command().reset()
+            .setStatusLine(validationResult.error)
+            .setType(CommandType.StatusUpdate).buffer
+        );
+    }
 
     const type = getType(data);
 
