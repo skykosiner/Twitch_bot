@@ -16,7 +16,7 @@ export default function getData(data: SystemCommand): null | Buffer {
         break;
 
         case CommandType.SystemCommand:
-            out = Buffer.from(`silent! !${data.message}`);
+            out = Buffer.from(`$silent! !${data.message}`);
         break;
     }
     return out;

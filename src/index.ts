@@ -1,4 +1,5 @@
 import System from "./systemCommands";
+import getStatusLine from "./statusline";
 import { SystemCommand } from "cmd";
 import * as dotenv from "dotenv";
 import TCP from "./tcp";
@@ -12,14 +13,13 @@ import Command, { CommandType } from "./cmd";
 import getType from "./get-type";
 import IrcClient from "./irc";
 import getData from "./get-data";
+import statusLine from "./statusline";
 
 dotenv.config();
 
 const systemCommands: {[key: string]: System} = {
     "asdf": new System("setxkbmap -layout us", "setxkbmap -layout real-prog-dvorak", 3000),
     "!turn off screen": new System("xrandr --output HDMI-1 --brightness 0.05", "xrandr --output HDMI-1 --brightness 1", 5000),
-    "!i3 workspace": new System("i3 workspace 10", null, null),
-    "!change background": new System("change_background_random", null, null),
 };
 
 //@ts-ignore
@@ -41,7 +41,7 @@ interface VimMessage {
     message: string,
 }
 
-bus.on("vim", function(data: VimMessage): boolean | void {
+bus.on("vim", function(data: VimMessage): void {
     let msg: string = data.message.substring(3);
 
     const va: SystemCommand = {
@@ -53,12 +53,20 @@ bus.on("vim", function(data: VimMessage): boolean | void {
 
     const validationResult = validate(va);
 
-    if (!validationResult.success) return console.log("error", validationResult.error);
+    if (!validationResult.success) {
+        tcp.write(
+            new Command().reset()
+                .setStatusLine(validationResult.error)
+                .setType(CommandType.StatusUpdate).buffer
+        );
+
+        return;
+    };
 
     console.log("data", va);
     tcp.write(new Command().reset()
               .setData(getData(va))
-              .setStatusLine(`${data.username} has done ${data.message} into vim`)
+              .setStatusLine(getStatusLine(va))
               .setType(getType(va)).buffer
              );
 });
@@ -81,12 +89,12 @@ bus.on("follow", function(name) {
     hue.lightsFLICk();
 });
 
+//@ts-ignore
 bus.on("system-command", function(command: string, message: SystemCommand) {
-    console.log("System command", command);
-
     tcp.write(new Command().reset()
+          .setCost(0)
           .setData(Buffer.from(`silent! !${command}`))
-          .setStatusLine(`it worked baby ${command}`)
+          .setStatusLine(statusLine(message))
           .setType(getType(message)).buffer
      );
 });
@@ -104,10 +112,13 @@ bus.on("start-sys", function(data: SystemCommand): void {
 
     const type = getType(data);
 
+    //TODO(yoni): This looks ugly as fuck maybe fix this at some point
     if (type === CommandType.SystemCommand && systemCommands[data.message] ||
         type === CommandType.asdf && systemCommands[data.message] || type ===
-            CommandType.xrandr && systemCommands[data.message]) {
-        console.log(`${systemCommands[data.message]}`);
+            CommandType.xrandr && systemCommands[data.message] || type ===
+                CommandType.changeBackground && systemCommands[data.message] ||
+                    type === CommandType.i3Workspace &&
+                        systemCommands[data.message]) {
         systemCommands[data.message].add(data);
     }
 });

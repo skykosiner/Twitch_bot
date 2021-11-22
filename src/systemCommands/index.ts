@@ -6,8 +6,8 @@ export default class SystemCommand {
     private stopTime: number;
     private timerId: ReturnType<typeof setInterval>;
 
-    constructor(private onCommand: string, private offCommand: string | null,
-                private commandLength: number | null) {
+    constructor(private onCommand: string, private offCommand: string,
+                private commandLength: number) {
         this.stopTime = 0;
     }
 
