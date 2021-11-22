@@ -12,6 +12,18 @@ local CommandTypes = Enum({
 
 local M = {}
 
+function M.disconnect()
+    if not M._tcp then
+        return
+    end
+
+    M._tcp:disconnect()
+    M._init = false
+    M._tcp = nil
+    M._env = nil
+end
+
+
 function M.init()
     local vwm_host = "localhost"
     M._tcp = TCP:new(vwm_host, 42069)
@@ -23,6 +35,10 @@ function M.init()
 
     M._env:on("data", function(line)
         local pobo = Pobo:new(line, 1)
+
+        local status = pobo:get_status()
+
+        require("yoni.statusline").set_status(status)
 
         local cmd = pobo:get_data()
         vim.cmd(cmd)
