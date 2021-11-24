@@ -1,6 +1,7 @@
 import * as net from "net";
 import { EventEmitter } from "events";
 
+
 export default class TCPSocket extends EventEmitter {
     private connections: net.Socket[] = [];
 
@@ -8,12 +9,12 @@ export default class TCPSocket extends EventEmitter {
         super();
 
         const server = net.createServer(async (socket: net.Socket) => {
-            console.log("Got a connection");
             this.emit("connection");
 
             this.connections.push(socket);
             socket.on("close", () => {
                 this.connections.splice(this.connections.indexOf(socket), 1);
+                this.emit("close");
             });
         });
 

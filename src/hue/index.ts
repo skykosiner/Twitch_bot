@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosStatic } from "axios";
 import bus from "../message-bus";
 
 //interface lightState {
@@ -23,20 +23,19 @@ export class Hue {
         this.name = name;
     };
 
-    private async turnOn(light: number): Promise<any> {
+    private async turnOn(light: number): Promise<AxiosStatic > {
         return await axios.put(Hue.baseURL + "lights/" + light + "/state", {
             on: true
         });
     };
 
-    private async turnOff(light: number): Promise<any> {
+    private async turnOff(light: number): Promise<AxiosStatic> {
         return await axios.put(Hue.baseURL + "lights/" + light + "/state", {
             on: false
         });
     };
 
     public async lightsFLICk(): Promise<boolean | void> {
-
         if (this.name !== "StreamElements") {
            return bus.emit("irc-message", "You aint a bot get out only stream elements can do that baby");
         };
