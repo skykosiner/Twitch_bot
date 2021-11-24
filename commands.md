@@ -1,5 +1,5 @@
 # Yoni/mod Only Commands
-* !ban (user name here) - If a user starts to do anything they should not they can get band (unband command in the works)
+* !band (user name here) - If a user starts to do anything they should not they can get band (unband command in the works)
 
 # System
 * !turn off screen (changes my montior brightness to 0.05 for 5 seconds)
