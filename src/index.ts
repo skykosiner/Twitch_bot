@@ -123,11 +123,9 @@ bus.on("follow", function(name) {
     new Hue(name).lightsFLICk();
 });
 
-//@ts-ignore
 bus.on("system-command", function(command: string, message: SystemCommand) {
     console.log("Command", command);
     tcp.write(new Command().reset()
-          .setCost(0)
           .setData(Buffer.from(`silent! !${command}`))
           .setStatusLine(statusLine(message))
           .setType(getType(message)).buffer
