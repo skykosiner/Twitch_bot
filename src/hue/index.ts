@@ -36,9 +36,7 @@ export class Hue {
     };
 
     public async lightsFLICk(): Promise<boolean | void> {
-        if (this.name !== "StreamElements") {
-           return bus.emit("irc-message", "You aint a bot get out only stream elements can do that baby");
-        };
+        if (this.name !== "StreamElements") return bus.emit("irc-message", "You aint a bot get out only stream elements can do that baby");
 
         for (let light of this.lights) {
             await this.turnOn(light)
