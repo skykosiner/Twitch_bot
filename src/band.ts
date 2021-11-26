@@ -33,16 +33,10 @@ export default class Band {
         });
 
         this.banded.concat(filterBand);
-
-
-        console.log(this.banded);
-
     };
 
     public async isUserBand(username: string): Promise<boolean> {
         await this.getBandFile();
-        const con = "\n";
-        username = username.concat(con);
         return this.banded.includes(username);
     }
 

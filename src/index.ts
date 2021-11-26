@@ -74,11 +74,10 @@ bus.on("band", function(data: band): void {
 
 bus.on("vim", async function(data: VimMessage): Promise<void> {
     const band = new Band();
-    await band.getBandFile();
-    if (band.isUserBand(data.username)) {
-        bus.emit("irc-message", `Sorry @${data.username} your band you can't vim`)
+    if (await band.isUserBand(data.username)) {
+        bus.emit("irc-message", `Sorry @${data.username} your band, you can't vim`);
         tcp.write(new Command().reset()
-            .setStatusLine(`${data.username} is band you can't vim`)
+            .setStatusLine(`${data.username} is band, you can't vim`)
             .setType(CommandType.StatusUpdate).buffer
         );
 
@@ -140,8 +139,9 @@ bus.on("system-command", function(command: string, message: SystemCommand) {
 });
 
 bus.on("start-sys", async function(data: SystemCommand): Promise<void> {
-    if (await new Band().isUserBand(data.username).then((res) => { return res })) {
-        bus.emit("irc-message", `Sorry @${data.username} your band you can't control my computer baby`)
+    const band = new Band();
+    if (await band.isUserBand(data.username)) {
+        bus.emit("irc-message", `Sorry @${data.username} your band, you can't control my computer baby`)
         tcp.write(new Command().reset()
             .setStatusLine(`${data.username} is band`)
             .setType(CommandType.StatusUpdate).buffer
