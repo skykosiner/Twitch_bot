@@ -21,6 +21,7 @@ function M.disconnect()
     M._init = false
     M._tcp = nil
     M._env = nil
+    print("Disconnected from server")
 end
 
 
