@@ -6,8 +6,6 @@ export default class Band {
 
     public async addBand(username: string): Promise<boolean | void> {
         await this.getBandFile();
-        const con = "\n";
-        username = username.concat(con);
         if(this.banded.includes(username)) return bus.emit("irc-message", "The user is allready band");
 
         this.banded.push(username);
@@ -15,7 +13,7 @@ export default class Band {
         appendFile("./band-users.txt", `${username}\n`, function(err) {
             if (err) throw err;
             return;
-        })
+       })
     };
 
     public async removeBand(username: string): Promise<boolean | void> {
@@ -48,16 +46,17 @@ export default class Band {
         return this.banded.includes(username);
     }
 
-
-    private getBandFile() {
+    public getBandFile() {
         return new Promise((res, rej) => {
             readFile("./band-users.txt", (err: Error | undefined, data: Buffer) => {
                 if (err) {
                     console.log(err);
                     rej(err);
                 } else {
-                    const d = data.toString()
-                    this.banded.push(`${d}`);
+                    const arr = data.toString().split("\n")
+                    for (const a in arr) {
+                        if (arr[a] !== "") this.banded.push(arr[a]);
+                    };
                     res(null);
                 }
             });

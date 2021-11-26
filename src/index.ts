@@ -57,9 +57,14 @@ interface band {
 }
 
 bus.on("band", function(data: band): void {
-    const msg: string = data.message.substring(5).trim();
+    let msg = data.message.substring(5).trim();
+    data.message = data.message.substring(5).trim();
     if (data.type === Ban.ban) {
         new Band().addBand(msg);
+        tcp.write(new Command().reset()
+                  .setStatusLine(`${data.message} has been band`)
+                  .setType(CommandType.StatusUpdate).buffer
+                 );
         return;
     } else if (data.type === Ban.unband) {
         new Band().removeBand(msg);
@@ -68,7 +73,9 @@ bus.on("band", function(data: band): void {
 });
 
 bus.on("vim", async function(data: VimMessage): Promise<void> {
-    if (await new Band().isUserBand(data.username).then((res) => { return res })) {
+    const band = new Band();
+    await band.getBandFile();
+    if (band.isUserBand(data.username)) {
         bus.emit("irc-message", `Sorry @${data.username} your band you can't vim`)
         tcp.write(new Command().reset()
             .setStatusLine(`${data.username} is band you can't vim`)
