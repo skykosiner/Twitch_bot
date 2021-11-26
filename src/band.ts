@@ -6,7 +6,7 @@ export default class Band {
 
     public async addBand(username: string): Promise<boolean | void> {
         await this.getBandFile();
-        if(this.banded.includes(username)) return bus.emit("irc-message", "The user is allready band");
+        if(this.banded.includes(username)) return bus.emit("irc-message", `The user @${username} is allready band`);
 
         this.banded.push(username);
 
