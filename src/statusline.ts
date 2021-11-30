@@ -18,7 +18,7 @@ export default function statusLine(data: SystemCommand, validInput: boolean = tr
         return `${name}: Vim Command ${data.message }`;
     }
 
-    if (type === CommandType.SystemCommand || type === CommandType.asdf || type === CommandType.xrandr || type === CommandType.i3Workspace || type === CommandType.changeBackground) {
+    if (type === CommandType.SystemCommand) {
         return `${name}: ${data.message }`;
     }
 

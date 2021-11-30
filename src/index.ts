@@ -132,7 +132,10 @@ bus.on("follow", function(name) {
 });
 
 bus.on("system-command", function(command: string, message: SystemCommand) {
-    console.log("Command", command);
+    if (command !== "") {
+        console.log("Command", command);
+    }
+
     tcp.write(new Command().reset()
           .setData(Buffer.from(`silent! !${command}`))
           .setStatusLine(statusLine(message))

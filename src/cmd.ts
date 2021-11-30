@@ -17,11 +17,7 @@ export enum CommandType {
     SystemCommand = 2,
     VimInsert = 3,
     VimAfter = 4,
-    xrandr = 5,
-    asdf = 6,
-    StatusUpdate = 7,
-    changeBackground = 8,
-    i3Workspace = 9,
+    StatusUpdate = 5,
 }
 
 const typeToString: Map<CommandType, string> = new Map([
