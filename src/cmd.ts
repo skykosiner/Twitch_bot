@@ -62,7 +62,7 @@ export default class Command {
 
     setStatusLine(status: string): Command {
         if (status.length > 50) {
-            throw new Error("Status line can only go up to 50 you dumb fuck");
+            throw new Error("Status line can only go up to 50");
         }
         Buffer.from(status).copy(this._buffer, statuslineIdx);
         return this;

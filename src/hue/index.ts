@@ -23,7 +23,7 @@ export class Hue {
         this.name = name;
     };
 
-    private async turnOn(light: number): Promise<AxiosStatic > {
+    private async turnOn(light: number): Promise<AxiosStatic> {
         return await axios.put(Hue.baseURL + "lights/" + light + "/state", {
             on: true
         });

@@ -9,8 +9,8 @@ import bandCommands from "./band-commands";
 
 enum IrcState {
     Waiting = 1,
-        Connected = 2,
-        Errored = 3
+    Connected = 2,
+    Errored = 3
 };
 
 export type IrcTags = {

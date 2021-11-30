@@ -8,10 +8,10 @@ export default function getType(data: SystemCommand): CommandType {
     if (data.commandType === CommandType.VimInsert) return CommandType.VimInsert;
     if (data.commandType === CommandType.VimAfter) return CommandType.VimAfter;
     if (data.commandType === CommandType.SystemCommand) return CommandType.SystemCommand;
-    if (data.commandType === CommandType.asdf) return CommandType.asdf;
-    if (data.commandType === CommandType.xrandr) return CommandType.xrandr;
-    if (data.commandType === CommandType.i3Workspace) return CommandType.i3Workspace;
-    if (data.commandType === CommandType.changeBackground) return CommandType.changeBackground;
+    if (data.commandType === CommandType.asdf) return CommandType.SystemCommand;
+    if (data.commandType === CommandType.xrandr) return CommandType.SystemCommand;
+    if (data.commandType === CommandType.i3Workspace) return CommandType.SystemCommand;
+    if (data.commandType === CommandType.changeBackground) return CommandType.SystemCommand;
 
     return CommandType.VimAfter;
 };

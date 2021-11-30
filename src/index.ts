@@ -22,6 +22,8 @@ dotenv.config();
 const systemCommands: {[key: string]: System} = {
     "asdf": new System("setxkbmap -layout us", "setxkbmap -layout real-prog-dvorak", 3000),
     "!turn off screen": new System("xrandr --output HDMI-1 --brightness 0.05", "xrandr --output HDMI-1 --brightness 1", 5000),
+    "!i3 workspace": new System("i3 workspace 10", "", 0),
+    "!change background": new System("change_background_random", "", 0),
 };
 
 //@ts-ignore
@@ -163,13 +165,9 @@ bus.on("start-sys", async function(data: SystemCommand): Promise<void> {
 
     const type = getType(data);
 
-    //TODO(yoni): This looks ugly as fuck maybe fix this at some point
-    if (type === CommandType.SystemCommand && systemCommands[data.message] ||
-        type === CommandType.asdf && systemCommands[data.message] || type ===
-            CommandType.xrandr && systemCommands[data.message] || type ===
-                CommandType.changeBackground && systemCommands[data.message] ||
-                    type === CommandType.i3Workspace &&
-                        systemCommands[data.message]) {
+    if (type === CommandType.SystemCommand && systemCommands[data.message]) {
         systemCommands[data.message].add(data);
-    }
+    } else {
+        throw new Error(`Invalid command. How the fuck did that even happen?\nThat command should not have been emited to the server...\n${data.message}`);
+    };
 });
