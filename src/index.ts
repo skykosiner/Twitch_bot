@@ -16,12 +16,13 @@ import getData from "./get-data";
 import statusLine from "./statusline";
 import Band from "./band";
 import { Ban } from "./irc/band-commands";
+import { MessageFromYoni, YoniMessage } from "./irc/yoni-commands";
 
 dotenv.config();
 
 const systemCommands: {[key: string]: System} = {
     "asdf": new System("setxkbmap -layout us", "setxkbmap -layout real-prog-dvorak", 3000),
-    "!turn off screen": new System("xrandr --output HDMI-1 --brightness 0.05", "xrandr --output HDMI-1 --brightness 1", 5000),
+    "!turn off screen": new System("xrandr --output DP-4 --brightness 0.05", "xrandr --output DP-4 --brightness 1", 5000),
     "!i3 workspace": new System("i3 workspace 10", "", 0),
     "!change background": new System("change_background_random", "", 0),
 };
@@ -58,28 +59,47 @@ interface band {
     type: Ban
 }
 
+let on: boolean = true;
+
+bus.on("from-yoni", function(msg: MessageFromYoni) {
+    if (msg.type === YoniMessage.TurnOn) {
+        on = true;
+    } else if (msg.type === YoniMessage.TurnOff) {
+        on = false;
+    } else {
+        throw new Error("Unknown message type...\n" + JSON.stringify(msg));
+    };
+});
+
 bus.on("band", function(data: band): void {
     let msg = data.message.substring(5).trim();
     data.message = data.message.substring(5).trim();
     if (data.type === Ban.ban) {
-        new Band().addBand(msg);
-        tcp.write(new Command().reset()
-                  .setStatusLine(`${data.message} has been band`)
-                  .setType(CommandType.StatusUpdate).buffer
-                 );
+        new Band(tcp).addBand(msg);
         return;
     } else if (data.type === Ban.unband) {
-        new Band().removeBand(msg);
+        tcp.write(new Command().reset()
+                  .setStatusLine(`${data.message} has been unbanned`)
+                  .setType(CommandType.StatusUpdate).buffer
+                 );
         return;
     };
 });
 
 bus.on("vim", async function(data: VimMessage): Promise<void> {
-    const band = new Band();
+    const band = new Band(tcp);
     if (await band.isUserBand(data.username)) {
-        bus.emit("irc-message", `Sorry @${data.username} your band, you can't vim`);
+        bus.emit("irc-message", `Sorry @${data.username} your banded, you can't vim`);
+        if (data.username.length > 10) {
+            tcp.write(new Command().reset()
+                      .setStatusLine(`Hey you are banned, you can't vim`)
+                      .setType(CommandType.StatusUpdate).buffer
+                     );
+             return;
+        };
+        bus.emit("irc-message", `Sorry @${data.username} your banded, you can't vim`);
         tcp.write(new Command().reset()
-            .setStatusLine(`${data.username} is band, you can't vim`)
+            .setStatusLine(`${data.username} is banded, you can't vim`)
             .setType(CommandType.StatusUpdate).buffer
         );
 
@@ -107,6 +127,16 @@ bus.on("vim", async function(data: VimMessage): Promise<void> {
         return;
     };
 
+    if (!on) {
+        tcp.write(
+            new Command().reset()
+                .setStatusLine(`${data.username}: vim is turend off`)
+                .setType(CommandType.StatusUpdate).buffer
+        );
+
+        return;
+    };
+
     console.log("data", va);
     tcp.write(new Command().reset()
               .setData(getData(va))
@@ -128,13 +158,41 @@ bus.on("message", function(message) {
 });
 
 bus.on("follow", function(name) {
+    //Flick my lights on and off
     new Hue(name).lightsFLICk();
+
+    // Update status bar to thank the user
+    tcp.write(new Command().reset()
+         .setStatusLine(`${name}: Thank you for following`)
+         .setType(CommandType.StatusUpdate).buffer
+     );
+});
+
+bus.on("subscribe", function(name) {
+    //Flick my lights on and off
+    new Hue(name).lightsFLICk();
+
+    // Update status bar to thank the user
+    tcp.write(new Command().reset()
+         .setStatusLine(`${name}: Thank you for subscribing`)
+         .setType(CommandType.StatusUpdate).buffer
+     );
 });
 
 bus.on("system-command", function(command: string, message: SystemCommand) {
     if (command !== "") {
         console.log("Command", command);
     }
+
+    if (!on) {
+        tcp.write(
+            new Command().reset()
+            .setStatusLine(`${message.username}: system-commands our turend off`)
+                .setType(CommandType.StatusUpdate).buffer
+        );
+
+        return;
+    };
 
     tcp.write(new Command().reset()
           .setData(Buffer.from(`silent! !${command}`))
@@ -144,9 +202,17 @@ bus.on("system-command", function(command: string, message: SystemCommand) {
 });
 
 bus.on("start-sys", async function(data: SystemCommand): Promise<void> {
-    const band = new Band();
+    const band = new Band(tcp);
     if (await band.isUserBand(data.username)) {
-        bus.emit("irc-message", `Sorry @${data.username} your band, you can't control my computer baby`)
+        if (data.username.length > 10) {
+            bus.emit("irc-message", `Sorry @${data.username} your banded, you can't control my computer baby`);
+            tcp.write(new Command().reset()
+                      .setStatusLine(`Hey you are banned, you can't do that`)
+                      .setType(CommandType.StatusUpdate).buffer
+                     );
+             return;
+        };
+        bus.emit("irc-message", `Sorry @${data.username} your band, you can't do that`);
         tcp.write(new Command().reset()
             .setStatusLine(`${data.username} is band`)
             .setType(CommandType.StatusUpdate).buffer

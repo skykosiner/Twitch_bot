@@ -1,8 +1,13 @@
-import { appendFile, readFile, readFileSync, writeFileSync } from "fs";
+import { appendFile, readFile } from "fs";
+import Command, { CommandType } from "./cmd";
 import bus from "./message-bus";
+import TCPSocket from "./tcp";
 
 export default class Band {
     public banded: string[] = []
+
+    constructor(private tcp: TCPSocket) {
+    }
 
     public async addBand(username: string): Promise<boolean | void> {
         await this.getBandFile();
@@ -10,29 +15,15 @@ export default class Band {
 
         this.banded.push(username);
 
+        this.tcp.write(new Command().reset()
+                  .setStatusLine(`${username} has been banded`)
+                  .setType(CommandType.StatusUpdate).buffer
+                 );
+
         appendFile("./band-users.txt", `${username}\n`, function(err) {
             if (err) throw err;
             return;
        })
-    };
-
-    public async removeBand(username: string): Promise<boolean | void> {
-        await this.getBandFile();
-
-        const data = readFileSync("./band-users.txt", 'utf-8');
-        const ip = username
-
-        const newValue = data.replace(new RegExp(ip), '');
-        writeFileSync("./band-users.txt", newValue, 'utf-8');
-
-        const con = "\n";
-        username = username.concat(con);
-
-        let filterBand = this.banded.filter(function (currentElement) {
-            return currentElement !== username;
-        });
-
-        this.banded.concat(filterBand);
     };
 
     public async isUserBand(username: string): Promise<boolean> {

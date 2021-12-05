@@ -65,12 +65,13 @@ export default class IrcClientImpl extends EventEmitter implements IrcClient {
         });
 
         this.client.on("message", (_: string, tags: IrcTags, message: string): boolean | void => {
-                vimCommand(tags, message);
-                bandCommands(message, tags);
-                if (message.startsWith("Thank you for following")) return bus.emit("follow", tags["display-name"]);
-                if (message.startsWith("!commands")) return bus.emit("irc-message", `@${tags["display-name"]} You can find the commands for the bot at https://github.com/yonikosiner/Twitch_bot/blob/master/commands.md`);
-                this.emitters.forEach(e => e(bus, tags, message));
-                bus.emit("message", `${tags["display-name"]}: ${message}`);
+            vimCommand(tags, message);
+            bandCommands(message, tags);
+            if (message.startsWith("Thank you for following")) return bus.emit("follow", tags["display-name"]);
+            if (message.startsWith("Thank you for subscribing")) return bus.emit("subscribe", tags["display-name"]);
+            if (message.startsWith("!commands")) return bus.emit("irc-message", `@${tags["display-name"]} You can find the commands for the bot at https://github.com/yonikosiner/Twitch_bot/blob/master/commands.md`);
+            bus.emit("message", `${tags["display-name"]}: ${message}`);
+            this.emitters.forEach(e => e(bus, tags, message));
         });
     }
 
