@@ -159,7 +159,7 @@ bus.on("message", function(message) {
 
 bus.on("follow", function(name) {
     //Flick my lights on and off
-    new Hue(name).lightsFLICk();
+    new Hue(name).lightsFLICK();
 
     // Update status bar to thank the user
     tcp.write(new Command().reset()
@@ -170,7 +170,7 @@ bus.on("follow", function(name) {
 
 bus.on("subscribe", function(name) {
     //Flick my lights on and off
-    new Hue(name).lightsFLICk();
+    new Hue(name).lightsFLICK();
 
     // Update status bar to thank the user
     tcp.write(new Command().reset()

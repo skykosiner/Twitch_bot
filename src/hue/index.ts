@@ -15,7 +15,7 @@ import bus from "../message-bus";
 
 export class Hue {
     //On no a local ip on github whatever will you do?
-    private static baseURL: string = "http://10.0.0.23/api/vGeourmApBqx37QJaJUQ4AxboqUjli1Fj3LtTQdY/";
+    private static baseURL: string = "http://10.0.0.2/api/vGeourmApBqx37QJaJUQ4AxboqUjli1Fj3LtTQdY/";
     private lights: number[] = [1, 14, 16, 19, 20, 21, 22, 23, 24, 25, 26];
     private name: string;
 
@@ -35,11 +35,18 @@ export class Hue {
         });
     };
 
-    public async lightsFLICk(): Promise<boolean | void> {
+    private async isLightOn(light: number): Promise<boolean> {
+        const res = await axios.get(Hue.baseURL + "lights/" + light + "/state");
+        return res.data.on;
+    };
+
+    public async lightsFLICK(): Promise<boolean | void> {
         if (this.name !== "StreamElements") return bus.emit("irc-message", "You aint a bot get out only stream elements can do that baby");
+
 
         for (let light of this.lights) {
             await this.turnOn(light)
+            console.log(await this.isLightOn(1));
 
             setTimeout(async () => {
                 await this.turnOff(light);

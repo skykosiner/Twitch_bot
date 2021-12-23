@@ -21,12 +21,3 @@ export default function bandCommands(message: string, tags: IrcTags): void | boo
         return;
     }
 };
-
-/*
-1A4
-1 * 256 = 256
-A = 10
-10 * 16 = 160
-4 * 1  = 4
-256 + 160 + 4 = 420
-*/
