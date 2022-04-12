@@ -20,10 +20,10 @@ import { MessageFromYoni, YoniMessage } from "./irc/yoni-commands";
 
 dotenv.config();
 
-const systemCommands: {[key: string]: System} = {
+const systemCommands: { [key: string]: System } = {
     "asdf": new System("setxkbmap -layout us", "setxkbmap -layout real-prog-dvorak", 3000),
     "!turn off screen": new System("xrandr --output DP-4 --brightness 0.05", "xrandr --output DP-4 --brightness 1", 5000),
-    "!i3 workspace": new System("i3 workspace 10", "", 0),
+    "!i3 workspace": new System("i3 workspace 69", "", 0),
     "!change background": new System("change_background_random", "", 0),
 };
 
@@ -41,6 +41,10 @@ tcp.on("close", function() {
 
 tcp.on("connection", function() {
     console.log(`${getTime()}: Connection baby to that tcp girl`);
+    tcp.write(new Command().reset()
+        .setStatusLine(`Connected to tcp server baby`)
+        .setType(CommandType.StatusUpdate).buffer
+    );
 });
 
 tcp.on("connection-error", function(e: Error | undefined) {
@@ -79,9 +83,9 @@ bus.on("band", function(data: band): void {
         return;
     } else if (data.type === Ban.unband) {
         tcp.write(new Command().reset()
-                  .setStatusLine(`${data.message} has been unbanned`)
-                  .setType(CommandType.StatusUpdate).buffer
-                 );
+            .setStatusLine(`${data.message} has been unbanned`)
+            .setType(CommandType.StatusUpdate).buffer
+        );
         return;
     };
 });
@@ -89,13 +93,13 @@ bus.on("band", function(data: band): void {
 bus.on("vim", async function(data: VimMessage): Promise<void> {
     const band = new Band(tcp);
     if (await band.isUserBand(data.username)) {
-        bus.emit("irc-message", `Sorry @${data.username} your banded, you can't vim`);
+        bus.emit("irc-message", `Sorry @${data.username} you're banded, you can't vim`);
         if (data.username.length > 10) {
             tcp.write(new Command().reset()
-                      .setStatusLine(`Hey you are banned, you can't vim`)
-                      .setType(CommandType.StatusUpdate).buffer
-                     );
-             return;
+                .setStatusLine(`Hey you are banned, you can't vim`)
+                .setType(CommandType.StatusUpdate).buffer
+            );
+            return;
         };
         bus.emit("irc-message", `Sorry @${data.username} your banded, you can't vim`);
         tcp.write(new Command().reset()
@@ -139,10 +143,10 @@ bus.on("vim", async function(data: VimMessage): Promise<void> {
 
     console.log("data", va);
     tcp.write(new Command().reset()
-              .setData(getData(va))
-              .setStatusLine(getStatusLine(va))
-              .setType(getType(va)).buffer
-             );
+        .setData(getData(va))
+        .setStatusLine(getStatusLine(va))
+        .setType(getType(va)).buffer
+    );
 });
 
 bus.on("connected", function() {
@@ -158,14 +162,15 @@ bus.on("message", function(message) {
 });
 
 bus.on("follow", function(name) {
+    // Get the real username you fool, can find this in the message
     //Flick my lights on and off
     new Hue(name).lightsFLICK();
 
     // Update status bar to thank the user
     tcp.write(new Command().reset()
-         .setStatusLine(`${name}: Thank you for following`)
-         .setType(CommandType.StatusUpdate).buffer
-     );
+        .setStatusLine(`${name}: Thank you for following`)
+        .setType(CommandType.StatusUpdate).buffer
+    );
 });
 
 bus.on("subscribe", function(name) {
@@ -174,9 +179,9 @@ bus.on("subscribe", function(name) {
 
     // Update status bar to thank the user
     tcp.write(new Command().reset()
-         .setStatusLine(`${name}: Thank you for subscribing`)
-         .setType(CommandType.StatusUpdate).buffer
-     );
+        .setStatusLine(`${name}: Thank you for subscribing`)
+        .setType(CommandType.StatusUpdate).buffer
+    );
 });
 
 bus.on("system-command", function(command: string, message: SystemCommand) {
@@ -187,7 +192,7 @@ bus.on("system-command", function(command: string, message: SystemCommand) {
     if (!on) {
         tcp.write(
             new Command().reset()
-            .setStatusLine(`${message.username}: system-commands our turend off`)
+                .setStatusLine(`${message.username}: system-commands our turend off`)
                 .setType(CommandType.StatusUpdate).buffer
         );
 
@@ -195,10 +200,10 @@ bus.on("system-command", function(command: string, message: SystemCommand) {
     };
 
     tcp.write(new Command().reset()
-          .setData(Buffer.from(`silent! !${command}`))
-          .setStatusLine(statusLine(message))
-          .setType(getType(message)).buffer
-     );
+        .setData(Buffer.from(`silent! !${command}`))
+        .setStatusLine(statusLine(message))
+        .setType(getType(message)).buffer
+    );
 });
 
 bus.on("start-sys", async function(data: SystemCommand): Promise<void> {
@@ -207,10 +212,10 @@ bus.on("start-sys", async function(data: SystemCommand): Promise<void> {
         if (data.username.length > 10) {
             bus.emit("irc-message", `Sorry @${data.username} your banded, you can't control my computer baby`);
             tcp.write(new Command().reset()
-                      .setStatusLine(`Hey you are banned, you can't do that`)
-                      .setType(CommandType.StatusUpdate).buffer
-                     );
-             return;
+                .setStatusLine(`Hey you are banned, you can't do that`)
+                .setType(CommandType.StatusUpdate).buffer
+            );
+            return;
         };
         bus.emit("irc-message", `Sorry @${data.username} your band, you can't do that`);
         tcp.write(new Command().reset()

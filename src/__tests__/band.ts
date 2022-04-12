@@ -16,8 +16,6 @@ describe("Band", function() {
 
         if (band.isUserBand("e")) return enter = false;
 
-        enter = true;
-
         expect(enter).toEqual(false);
     });
 
