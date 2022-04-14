@@ -1,0 +1,57 @@
+package irc
+
+import (
+	"fmt"
+	"log"
+	"os"
+	"time"
+
+	twitchIrc "github.com/gempir/go-twitch-irc"
+)
+
+type Twitch struct {
+	channel       chan IrcMessage
+	client        *twitchIrc.Client
+	enableLogging bool
+	callbacks     []LoggingCallback
+}
+
+func CreateIrcClient() *Twitch {
+	return &Twitch{make(chan IrcMessage, 1), nil, false, nil}
+}
+
+func (t *Twitch) Connect() error {
+	token := os.Getenv("TWITCH_OAUTH_TOKEN")
+	channel := "yonikosiner"
+
+	client := twitchIrc.NewClient(channel, token)
+	client.Join(channel)
+	client.OnNewMessage(func(_ string, user twitchIrc.User, message twitchIrc.Message) {
+		// t.channel := make(chan IrcMessage)
+		t.channel <- IrcMessage{user.DisplayName, message.Text}
+	})
+
+	t.enableLogging = false
+
+	go func() {
+		for msg := range t.channel {
+			if t.enableLogging {
+				log.Printf("%d : IRC : %s: %s\n", time.Now().Unix(), msg.Name, msg.Message)
+			}
+		}
+	}()
+
+	return client.Connect()
+}
+
+func (t *Twitch) setLogging(enabled bool) {
+	t.enableLogging = enabled
+}
+
+func (t *Twitch) Channel() chan IrcMessage {
+	if t.channel == nil {
+		log.Fatal("Sorry there was an error, when getting the channel")
+	}
+
+	return t.channel
+}
