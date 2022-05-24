@@ -1,36 +1,22 @@
 package irc
 
 import (
-	"log"
-	"os"
-
-	"github.com/gempir/go-twitch-irc"
+	"fmt"
+	"github.com/gempir/go-twitch-irc/v2"
 )
 
-type Twitch struct {
-	channel       chan IrcMessage
-	client        *twitch.Client
-	enableLogging bool
-	callbacks     []LoggingCallback
-}
+func IrcTest() {
+	// or client := twitch.NewAnonymousClient() for an anonymous user (no write capabilities)
+	client := twitch.NewClient("yourtwitchusername", "oauth:123123123")
 
-func CreateIrcClient() *Twitch {
-	return &Twitch{make(chan IrcMessage, 1), nil, false, nil}
-}
-
-func (t *Twitch) Connect() error {
-	token := os.Getenv("TWITCH_OAUTH_TOKEN")
-	channel := "yonikosiner"
-
-	t.client = twitch.NewClient(channel, token)
-
-	t.client.Join(channel)
-
-	t.client.OnNewMessage(func(channel string, user twitch.User, message twitch.Message) {
-		log.Println(message.Text)
+	client.OnPrivateMessage(func(message twitch.PrivateMessage) {
+		fmt.Println(message.Message)
 	})
 
-	t.client.Say(channel, "69420")
+	client.Join("gempir")
 
-	return t.client.Connect()
+	err := client.Connect()
+	if err != nil {
+		panic(err)
+	}
 }
