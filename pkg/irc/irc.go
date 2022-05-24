@@ -3,14 +3,13 @@ package irc
 import (
 	"log"
 	"os"
-	"time"
 
-	twitchIrc "github.com/gempir/go-twitch-irc"
+	"github.com/gempir/go-twitch-irc"
 )
 
 type Twitch struct {
 	channel       chan IrcMessage
-	client        *twitchIrc.Client
+	client        *twitch.Client
 	enableLogging bool
 	callbacks     []LoggingCallback
 }
@@ -23,30 +22,15 @@ func (t *Twitch) Connect() error {
 	token := os.Getenv("TWITCH_OAUTH_TOKEN")
 	channel := "yonikosiner"
 
-	t.client = twitchIrc.NewClient(channel, token)
+	t.client = twitch.NewClient(channel, token)
+
 	t.client.Join(channel)
-	t.client.OnNewMessage(func(_ string, user twitchIrc.User, message twitchIrc.Message) {
-		log.Println("New message")
-		t.channel <- IrcMessage{user.DisplayName, message.Text}
+
+	t.client.OnNewMessage(func(channel string, user twitch.User, message twitch.Message) {
+		log.Println(message.Text)
 	})
 
-	t.enableLogging = true
-
-	go func() {
-		for msg := range t.channel {
-			if t.enableLogging {
-				log.Printf("%d : IRC : %s: %s\n", time.Now().Unix(), msg.Name, msg.Message)
-			}
-		}
-	}()
+	t.client.Say(channel, "69420")
 
 	return t.client.Connect()
-}
-
-func (t *Twitch) setLogging(enabled bool) {
-	t.enableLogging = enabled
-}
-
-func (t *Twitch) Channel() chan IrcMessage {
-	return t.channel
 }
