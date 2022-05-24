@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/gempir/go-twitch-irc"
 )
 
 type hueAPI struct {
@@ -85,14 +87,11 @@ func (h *Hue) turnOff(light int, url string) {
     defer resp.Body.Close()
 }
 
-func (h *Hue) FlickMeDaddy(lights []int, name string) {
+func (h *Hue) FlickMeDaddy(client *twitch.Client, lights []int, name string) {
     url := os.Getenv("HUE_URL")
-	if name != "StreamElements" {
-        // TODO: Don't crash the program, I want to just not run this function, and
-        // let the user know that only stream elements can have that in chat.
-        // But for now, crash the program
-		os.Exit(1)
-	}
+    if name != "StreamElements" {
+        client.Say(os.Getenv("TWITCH_OAUTH_NAME"), "You're not StreamElements, get out of here")
+    }
 
     if !h.isConnected(os.Getenv("HUE_URL")) {
         log.Fatal("You're not connected to the hue serever")
