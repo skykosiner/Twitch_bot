@@ -26,6 +26,7 @@ func (b *Band) AddBand(username string, client *twitch.Client) {
     b.banded = append(b.banded, username)
 
     // TODO: Add to statusline that user is banded
+
     f, err := os.OpenFile("./band-users.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
 
     if err != nil {
