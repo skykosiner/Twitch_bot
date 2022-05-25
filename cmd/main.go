@@ -6,7 +6,6 @@ import (
 	"github.com/joho/godotenv"
 
 	"github.com/yonikosiner/twitch-bot/pkg/irc"
-	// "github.com/yonikosiner/twitch-bot/pkg/hue"
 )
 
 func main() {
@@ -17,7 +16,4 @@ func main() {
 
 	var t *irc.Twitch = &irc.Twitch{}
     t.Connect()
-
-	// var h *hue.Hue
-	// h.FlickMeDaddy([]int{1, 14, 16, 19, 20, 21, 22, 23, 24, 25, 26}, "StreamElements")
 }

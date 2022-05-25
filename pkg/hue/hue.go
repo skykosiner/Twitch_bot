@@ -22,7 +22,7 @@ func (h *Hue) isConnected(url string) bool {
     resp, err := http.Get(url)
 
     if err != nil {
-        log.Fatal("There was an error")
+        log.Fatal("There was an error `hue.go`", err)
     }
 
     if err != nil {
@@ -89,8 +89,14 @@ func (h *Hue) turnOff(light int, url string) {
 
 func (h *Hue) FlickMeDaddy(client *twitch.Client, lights []int, name string) {
     url := os.Getenv("HUE_URL")
+
+    if url == "" {
+        log.Fatal("No URL? :megamind: `hue.go`")
+    }
+
     if name != "StreamElements" {
         client.Say(os.Getenv("TWITCH_OAUTH_NAME"), "You're not StreamElements, get out of here")
+        return
     }
 
     if !h.isConnected(os.Getenv("HUE_URL")) {
@@ -101,6 +107,7 @@ func (h *Hue) FlickMeDaddy(client *twitch.Client, lights []int, name string) {
     }
 
     for i := 0; i < len(lights); i++ {
+        log.Print("Doing stuff with light:", lights[i])
         h.turnOn(lights[i], url)
 
         duration := time.Duration(3)*time.Second
