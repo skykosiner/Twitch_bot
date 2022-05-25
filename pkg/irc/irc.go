@@ -10,12 +10,17 @@ import (
 	"github.com/yonikosiner/twitch-bot/pkg/utils"
 )
 
+type Key struct {
+    X string
+}
+
 type MessageType int
 
 const (
     MSG MessageType = iota
     Ban
     Unban
+    Follow
 )
 
 type IrcMessage struct {
@@ -47,12 +52,7 @@ func (t *Twitch) Connect() error {
         for msg := range t.channel {
             switch msg.Type {
         case MSG:
-                // Following message
-                if strings.HasPrefix(msg.Message, "Thank you for following") {
-                    var h *hue.Hue
-                    h.FlickMeDaddy(t.client, []int{1, 14, 16, 19, 20, 21, 22, 23, 24, 25, 26}, msg.Name)
-                }
-
+                FollowCommands(msg, t.channel)
                 BanCommands(msg, t.channel)
 
             // Vim me daddy
@@ -67,6 +67,9 @@ func (t *Twitch) Connect() error {
                 var b *band.Band = &band.Band{}
                 band := strings.TrimSpace(strings.TrimPrefix(msg.Message, "!band"))
                 b.AddBand(band, t.client)
+        case Follow:
+                var h *hue.Hue
+                h.FlickMeDaddy(t.client, []int{1, 14, 16, 19, 20, 21, 22, 23, 24, 25, 26}, msg.Name)
             }
         }
     }()

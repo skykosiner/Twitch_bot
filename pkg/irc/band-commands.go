@@ -4,10 +4,6 @@ import (
 	"strings"
 )
 
-type Key struct {
-    X string
-}
-
 func BanCommands(Msg IrcMessage, channel chan IrcMessage) {
     m := map[Key]MessageType{}
     m[Key{"!band"}] = Ban
