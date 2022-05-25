@@ -22,6 +22,8 @@ const (
     Ban
     Unban
     Follow
+    TurnOn
+    TurnOff
 )
 
 type IrcMessage struct {
@@ -36,6 +38,8 @@ type Twitch struct {
 }
 
 func (t *Twitch) Connect() error {
+    on := true
+
     t.channel = make(chan IrcMessage)
 
 	token := os.Getenv("TWITCH_OAUTH_TOKEN")
@@ -56,6 +60,7 @@ func (t *Twitch) Connect() error {
                 utils.LogChat(fmt.Sprintf("%s: %s", msg.Name, msg.Message))
                 FollowCommands(msg, t.channel)
                 BanCommands(msg, t.channel)
+                YoniCommands(msg, t.channel)
                 // TODO: Setup emitters for the vim stuff like at: ../../../master/src/irc/vim-commands.ts
         case Ban:
                 mods := []string{"yonikosiner", "nniklask"}
@@ -68,8 +73,16 @@ func (t *Twitch) Connect() error {
                 band := strings.TrimSpace(strings.TrimPrefix(msg.Message, "!band"))
                 b.AddBand(band, t.client)
         case Follow:
-                var h *hue.Hue
-                h.FlickMeDaddy(t.client, []int{1, 14, 16, 19, 20, 21, 22, 23, 24, 25, 26}, msg.Name)
+                if !on {
+                    var h *hue.Hue
+                    h.FlickMeDaddy(t.client, []int{1, 14, 16, 19, 20, 21, 22, 23, 24, 25, 26}, msg.Name)
+                }
+        case TurnOn:
+            on = true
+        case TurnOff:
+            on = false
+        default:
+            panic(fmt.Sprintln("Unknown type", msg.Type))
             }
         }
     }()
