@@ -2,22 +2,12 @@ package irc
 
 import (
 	"strings"
+
+	"github.com/yonikosiner/twitch-bot/pkg/utils"
 )
 
-func CountWordsInString(str string) int {
-    newStr := strings.Split(str, " ")
-
-    var count int
-
-    for i := 0; i < len(newStr); i++ {
-        count++
-    }
-
-    return count
-}
-
 func FollowCommands(Msg IrcMessage, channel chan IrcMessage) {
-    if CountWordsInString(Msg.Message) < 4 {
+    if utils.CountWordsInString(Msg.Message) < 4 {
         return
     }
 

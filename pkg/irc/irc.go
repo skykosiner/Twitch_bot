@@ -1,6 +1,7 @@
 package irc
 
 import (
+	"fmt"
 	"os"
 	"strings"
 
@@ -52,11 +53,10 @@ func (t *Twitch) Connect() error {
         for msg := range t.channel {
             switch msg.Type {
         case MSG:
+                utils.LogChat(fmt.Sprintf("%s: %s", msg.Name, msg.Message))
                 FollowCommands(msg, t.channel)
                 BanCommands(msg, t.channel)
-
-            // Vim me daddy
-            // TODO: Setup emitters for the vim stuff like at: ../../../master/src/irc/vim-commands.ts
+                // TODO: Setup emitters for the vim stuff like at: ../../../master/src/irc/vim-commands.ts
         case Ban:
                 mods := []string{"yonikosiner", "nniklask"}
 
