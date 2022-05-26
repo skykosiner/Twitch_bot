@@ -15,5 +15,5 @@ func main() {
 	}
 
 	var t *irc.Twitch = &irc.Twitch{}
-    t.Connect()
+	t.Connect()
 }
