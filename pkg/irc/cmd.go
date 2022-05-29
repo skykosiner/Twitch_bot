@@ -11,12 +11,13 @@ type Command struct {
 	_buffer []byte
 }
 
-const typeIdx = 0
-const statuslineIdx = 1
+const typeIdx = 1
+const statuslineIdx = 2
 const dataIdx = 51
 
 func (c *Command) New(setType MessageType, setStatusLine string, setData []byte) []byte {
-    c._buffer = make([]byte, 1 + 50 + 2 + 200)
+    c._buffer = make([]byte, 1 + 2 + 51 + 200)
+
 	if len(setStatusLine) > 50 {
 		panic("Status line can only go up to 50")
 	}

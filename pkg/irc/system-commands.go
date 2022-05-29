@@ -35,7 +35,7 @@ func SystemCommands(Msg IrcMessage, tcp tcp.Server) {
 
 	Msg.Type = SystemCommand
 
-	log.Printf("Running system command", Msg)
+	log.Printf("Running system command %v", Msg)
 	systemCommandType := m[Key{Msg.Message}]
 
 	go func() {
