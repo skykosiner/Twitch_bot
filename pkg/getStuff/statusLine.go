@@ -1,4 +1,4 @@
-package utils
+package getStuff
 
 import (
 	"fmt"
@@ -6,12 +6,8 @@ import (
 	"github.com/yonikosiner/twitch-bot/pkg/irc"
 )
 
-func StatusLine(data irc.IrcMessage, validInput bool) string {
+func StatusLine(data irc.IrcMessage) string {
 	name := data.Name
-
-	if !validInput {
-		return fmt.Sprintf("Hey %s, touch grass KEKW", name)
-	}
 
 	commandType := GetType(data)
 

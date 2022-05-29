@@ -2,6 +2,11 @@ package systemcommands
 
 import (
 	"time"
+
+	"github.com/yonikosiner/twitch-bot/pkg/cmd"
+	"github.com/yonikosiner/twitch-bot/pkg/getStuff"
+	"github.com/yonikosiner/twitch-bot/pkg/irc"
+	"github.com/yonikosiner/twitch-bot/pkg/tcp"
 )
 
 type SendSystemCommand struct {
@@ -14,18 +19,15 @@ type SystemCommand struct {
 	CommandLength int
 }
 
-func (s *SystemCommand) Add(channel chan SendSystemCommand) {
-	// TOOD: Should we just send the TCP command from here instead of sending to a channel?
-	onCommandObject := SendSystemCommand{s.OnCommand}
+func (s *SystemCommand) Add(tcp *tcp.Server, msg irc.IrcMessage) {
+	var c *cmd.Command = &cmd.Command{}
+	tcp.Write(c.New(irc.SystemCommand, getStuff.StatusLine(msg), []byte(s.OnCommand)))
 
+	// If the off command is empty that means there is no off command, so just stop the program before the off command is sent
 	if s.OffCommand == "" {
-		channel <- onCommandObject
 		return
 	}
 
-	channel <- onCommandObject
-
 	time.Sleep(time.Duration(s.CommandLength) * time.Second)
-	offCommandObject := SendSystemCommand{s.OffCommand}
-	channel <- offCommandObject
+	tcp.Write(c.New(irc.SystemCommand, getStuff.StatusLine(msg), []byte(s.OnCommand)))
 }

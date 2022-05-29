@@ -1,64 +1,41 @@
 package cmd
 
 import (
-	"log"
-
-	"golang.org/x/tools/go/callgraph/static"
+	"github.com/yonikosiner/twitch-bot/pkg/irc"
 )
 
-type Commands int
+/*
+        1             2 - 51               52 - ...?
++---------------+---------------+-------------------------------+
+|     type      |   statusline  |           data...             |
++---------------+---------------+-------------------------------+
+*/
 
-func zeroBuffer() []byte {
-    bufferLen := 1 + 50 + 2 + 200
-    return [bufferLen]byte
+type Command struct {
+	_buffer []byte
 }
 
 const typeIdx = 0
 const statuslineIdx = 1
-const costIdx = 51
-const dataIdx = 53
+const dataIdx = 51
 
+func (c *Command) New(setType irc.MessageType, setStatusLine string, setData []byte) []byte {
+    c._buffer = make([]byte, 1 + 50 + 2 + 200)
+	if len(setStatusLine) > 50 {
+		panic("Status line can only go up to 50")
+	}
 
-const (
-    VimCommand Commands = iota
-    VimInsert
-    VimAfter
-    SystemCommand
-    StatusUpdate
-)
+	if setData == nil {
+		return c._buffer
+	}
 
-type Command struct {
-    _buffer []byte
-}
+	if len(setData) > 200 {
+		panic("Data is overr 200")
+	}
 
-func (c *Command) Reset() Command {
-    c._buffer = zeroBuffer()
-    return c
-}
+	c._buffer[typeIdx] = byte(setType)
+    copy(c._buffer[statuslineIdx:dataIdx], []byte(setStatusLine))
+    copy(c._buffer[dataIdx:200], []byte(setData))
 
-func (c *Command) SetType(type Commands) Command {
-    c._buffer[typeIdx] = type
-    return c
-}
-
-func (c *Command) SetStatusLine(status string) Command {
-    if len(status) > 50 {
-        panic("Status line can only go up to 50 in length")
-    }
-    buffer := []byte{status}
-    copy(buffer, c._buffer[statuslineIdx])
-    return c
-}
-
-func (c *Command) SetData(data: []byte) Command {
-    if data == nil {
-        return c
-    }
-
-    if len(data) > 200 {
-        panic("Data is over 200")
-    }
-
-    copy(data, c._buffer[dataIdx])
-    return c
+	return c._buffer
 }

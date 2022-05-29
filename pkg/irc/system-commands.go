@@ -1,12 +1,13 @@
 package irc
 
 import (
-	"fmt"
+	"log"
 
 	systemcommands "github.com/yonikosiner/twitch-bot/pkg/systemCommands"
+	"github.com/yonikosiner/twitch-bot/pkg/tcp"
 )
 
-func SystemCommands(Msg IrcMessage, channel chan systemcommands.SendSystemCommand) {
+func SystemCommands(Msg IrcMessage, tcp tcp.Server) {
 	m := map[Key]systemcommands.SystemCommand{}
 	m[Key{"asdf"}] = systemcommands.SystemCommand{"setxkbmap -layout us", "setxkbmap -layout real-prog-dvorak", 3}
 	m[Key{"!turn off screen"}] = systemcommands.SystemCommand{"xrandr --output D4-4 --brightness 0.05", "xrandr --output DP-4 --brightness 1", 5}
@@ -15,11 +16,11 @@ func SystemCommands(Msg IrcMessage, channel chan systemcommands.SendSystemComman
 
 	Msg.Type = SystemCommand
 
-	fmt.Println("systemcommand?", Msg)
+	log.Printf("Running system command", Msg)
 	systemCommandType := m[Key{Msg.Message}]
 
 	go func() {
 		var s *systemcommands.SystemCommand = &systemCommandType
-		s.Add(channel)
+		s.Add(&tcp, Msg)
 	}()
 }

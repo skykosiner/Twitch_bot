@@ -29,6 +29,7 @@ const (
 	VimAfter
 	VimCommand
 	SystemCommand
+	StatusUpdate
 )
 
 type IrcMessage struct {
@@ -43,10 +44,6 @@ type Twitch struct {
 }
 
 func (t *Twitch) Connect() error {
-	var s *tcp.Server = &tcp.Server{}
-	connect := s.Connect()
-	connect.Write([]byte("Hello world"))
-
 	on := true
 
 	t.channel = make(chan IrcMessage)
@@ -61,6 +58,10 @@ func (t *Twitch) Connect() error {
 		t.channel <- msg
 	})
 
+	var s *tcp.Server = &tcp.Server{}
+	server := s.Start()
+	server.Write([]byte("Hello world"))
+
 	// Go func your self
 	go func() {
 		for msg := range t.channel {
@@ -69,7 +70,7 @@ func (t *Twitch) Connect() error {
 				utils.LogChat(fmt.Sprintf("%s: %s", msg.Name, msg.Message))
 				FollowCommands(msg, t.channel)
 				BanCommands(msg, t.channel)
-				// SystemCommands(msg, SystemCommandChannel)
+				SystemCommands(msg, *server)
 				YoniCommands(msg, t.channel)
 				// TODO: Setup emitters for the vim stuff like at: ../../../master/src/irc/vim-commands.ts
 			case Ban:

@@ -36,7 +36,7 @@ func LogChat(message string) {
 	msg := strings.Split(message, " ")
 
 	if msg[0] == "StreamElements:" || msg[0] == "Nightbot:" || msg[0] == "yonikosiner:" {
-	// if msg[0] == "StreamElements:" || msg[0] == "Nightbot:" {
+		// if msg[0] == "StreamElements:" || msg[0] == "Nightbot:" {
 		return
 	}
 

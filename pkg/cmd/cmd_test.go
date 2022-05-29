@@ -1,10 +1,16 @@
-package cmd
+package cmd_test
 
-import "testing"
+import (
+	"fmt"
+	"testing"
 
-func TestSetStatusLine(t *testing.T) {
-    var c *Command
-    c.Reset()
-    c.SetStatusLine("Test")
-    c.SetType(StatusUpdate)
+	"github.com/yonikosiner/twitch-bot/pkg/cmd"
+	"github.com/yonikosiner/twitch-bot/pkg/getStuff"
+	"github.com/yonikosiner/twitch-bot/pkg/irc"
+)
+
+func TestCommand(t *testing.T) {
+    var c *cmd.Command = &cmd.Command{}
+    buffer := c.New(irc.VimAfter, getStuff.StatusLine(irc.IrcMessage{"yoni", "aoeu", irc.VimAfter}), []byte("hello"))
+    fmt.Println(string(buffer))
 }

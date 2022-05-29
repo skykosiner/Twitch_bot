@@ -1,4 +1,4 @@
-package utils
+package getStuff
 
 import (
 	"github.com/yonikosiner/twitch-bot/pkg/irc"
