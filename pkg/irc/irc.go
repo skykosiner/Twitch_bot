@@ -100,7 +100,3 @@ func (t *Twitch) Connect() error {
 
 	return t.client.Connect()
 }
-
-func (t *Twitch) Channel() chan IrcMessage {
-	return t.channel
-}

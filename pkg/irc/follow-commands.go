@@ -27,4 +27,3 @@ func FollowCommands(Msg IrcMessage, channel chan IrcMessage) {
         }
     }()
 }
-

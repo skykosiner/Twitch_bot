@@ -1,8 +1,4 @@
-package cmd
-
-import (
-	"github.com/yonikosiner/twitch-bot/pkg/irc"
-)
+package irc
 
 /*
         1             2 - 51               52 - ...?
@@ -19,7 +15,7 @@ const typeIdx = 0
 const statuslineIdx = 1
 const dataIdx = 51
 
-func (c *Command) New(setType irc.MessageType, setStatusLine string, setData []byte) []byte {
+func (c *Command) New(setType MessageType, setStatusLine string, setData []byte) []byte {
     c._buffer = make([]byte, 1 + 50 + 2 + 200)
 	if len(setStatusLine) > 50 {
 		panic("Status line can only go up to 50")

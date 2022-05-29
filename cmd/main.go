@@ -15,5 +15,9 @@ func main() {
 	}
 
 	var t *irc.Twitch = &irc.Twitch{}
-	t.Connect()
+    error := t.Connect()
+
+    if error.Error() != "" {
+        log.Fatal("There was an error connecting to twitch", error.Error())
+    }
 }

@@ -1,25 +1,23 @@
-package getStuff
+package irc
 
 import (
 	"fmt"
-
-	"github.com/yonikosiner/twitch-bot/pkg/irc"
 )
 
-func StatusLine(data irc.IrcMessage) string {
+func StatusLine(data IrcMessage) string {
 	name := data.Name
 
 	commandType := GetType(data)
 
-	if commandType == irc.VimInsert || commandType == irc.VimAfter {
+	if commandType == VimInsert || commandType == VimAfter {
 		return fmt.Sprintf("%s: Has inserted %s", name, data.Message)
 	}
 
-	if commandType == irc.VimCommand {
+	if commandType == VimCommand {
 		return fmt.Sprintf("%s: Vim command %s", name, data.Message)
 	}
 
-	if commandType == irc.SystemCommand {
+	if commandType == SystemCommand {
 		return fmt.Sprintf("%s: %s", name, data.Message)
 	}
 
