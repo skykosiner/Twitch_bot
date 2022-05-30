@@ -60,19 +60,18 @@ func (t *Twitch) Connect() error {
 
 	var s *tcp.Server = &tcp.Server{}
 	server := s.Start()
-	server.Write([]byte("Hello world"))
 
 	// Go func your self
 	go func() {
 		for msg := range t.channel {
 			switch msg.Type {
 			case MSG:
-				utils.LogChat(fmt.Sprintf("%s: %s", msg.Name, msg.Message))
-				FollowCommands(msg, t.channel)
-				BanCommands(msg, t.channel)
-				SystemCommands(msg, *server)
-				YoniCommands(msg, t.channel)
-				// TODO: Setup emitters for the vim stuff like at: ../../../master/src/irc/vim-commands.ts
+                utils.LogChat(fmt.Sprintf("%s: %s", msg.Name, msg.Message))
+                FollowCommands(msg, t.channel)
+                BanCommands(msg, t.channel)
+                YoniCommands(msg, t.channel)
+                SystemCommands(msg, *server)
+                VimCommands(*&server, msg)
 			case Ban:
 				mods := []string{"yonikosiner", "nniklask"}
 

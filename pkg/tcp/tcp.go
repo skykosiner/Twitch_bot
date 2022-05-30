@@ -40,12 +40,13 @@ func (s *Server) Start() *Server {
 
 func (s *Server) Write(data []byte) {
 	for _, connection := range s.Connections {
-		code, err := connection.Write([]byte(data))
+        connection.Write([]byte(data))
+		/* code, err := connection.Write([]byte(data))
 
 		if err != nil {
 			log.Fatal("There was an error `tcp.go`", err)
 		}
 
-		log.Println("code", code)
+		log.Println("code", code) */
 	}
 }

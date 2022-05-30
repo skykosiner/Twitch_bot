@@ -1,5 +1,7 @@
 package irc
 
+import "fmt"
+
 /*
         1             2 - 51               52 - ...?
 +---------------+---------------+-------------------------------+
@@ -27,12 +29,15 @@ func (c *Command) New(setType MessageType, setStatusLine string, setData []byte)
 	}
 
 	if len(setData) > 200 {
-		panic("Data is overr 200")
+		panic("Data is over 200, that's illegal")
 	}
 
 	c._buffer[typeIdx] = byte(setType)
     copy(c._buffer[statuslineIdx:dataIdx], []byte(setStatusLine))
     copy(c._buffer[dataIdx:200], []byte(setData))
+
+    fmt.Println("Buffer", c._buffer)
+    fmt.Println("Buffer into string", string(c._buffer))
 
 	return c._buffer
 }
