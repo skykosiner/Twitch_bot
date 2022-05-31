@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-
 	"github.com/joho/godotenv"
 
 	"github.com/yonikosiner/twitch-bot/pkg/irc"

@@ -5,6 +5,7 @@ import (
 	"os/exec"
 	"time"
 
+	"github.com/yonikosiner/twitch-bot/pkg/band"
 	"github.com/yonikosiner/twitch-bot/pkg/tcp"
 )
 
@@ -31,6 +32,12 @@ func (s *SysCommand) Add(tcp *tcp.Server, msg IrcMessage) {
 }
 
 func SystemCommands(Msg IrcMessage, tcp tcp.Server) {
+    var b *band.Band = &band.Band{}
+
+    if b.IsUserBand(Msg.Name) {
+        return
+    }
+
     // Run script in my .dotfiles to get the main screen
     stdout, err := exec.Command("get_main_screen").Output()
 
@@ -52,7 +59,6 @@ func SystemCommands(Msg IrcMessage, tcp tcp.Server) {
 
 	go func() {
         if Msg.Type == SystemCommand {
-            fmt.Println("test")
             var s *SysCommand = &systemCommandType
             s.Add(&tcp, Msg)
         }

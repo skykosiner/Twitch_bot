@@ -5,6 +5,10 @@ import (
 )
 
 func YoniCommands(Msg IrcMessage, channel chan IrcMessage) {
+    if Msg.Name != "yonikosiner" {
+        return
+    }
+
     m := map[Key]MessageType{}
     m[Key{"!enable"}] = TurnOn
     m[Key{"!disable"}] = TurnOff

@@ -71,7 +71,7 @@ func (t *Twitch) Connect() error {
                 BanCommands(msg, t.channel)
                 YoniCommands(msg, t.channel)
                 SystemCommands(msg, *server)
-                VimCommands(*&server, msg)
+                VimCommands(server, msg, t.client)
 			case Ban:
 				mods := []string{"yonikosiner", "nniklask"}
 
