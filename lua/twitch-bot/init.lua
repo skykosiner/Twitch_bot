@@ -38,10 +38,11 @@ function M.init()
         local pobo = Pobo:new(line, 1)
 
         local status = pobo:get_status()
-
-        require("yoni.statusline").set_status(status)
+        require("yoni.winbar").set_status(status)
+        print("status", status)
 
         local cmd = pobo:get_data()
+        print("cmd", cmd)
         vim.cmd(cmd)
     end)
 end
