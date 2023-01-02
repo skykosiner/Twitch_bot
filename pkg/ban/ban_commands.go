@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/gempir/go-twitch-irc"
+	"github.com/skykosiner/twitch-bot-golang/pkg/utils"
 )
 
 type Ban struct {
@@ -37,13 +38,7 @@ func (b *Ban) AddBand(username string, client *twitch.Client) {
 
 func (b *Ban) IsUserBand(username string) bool {
 	b.GetBandFile()
-	for _, name := range b.banded {
-		if name == username {
-			return true
-		}
-	}
-
-	return false
+	return utils.StringInArr(username, b.banded)
 }
 
 func (b *Ban) GetBandFile() {

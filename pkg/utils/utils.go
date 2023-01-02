@@ -7,6 +7,16 @@ import (
 	"strings"
 )
 
+func StringInArr(str string, array []string) bool {
+	for _, value := range array {
+		if value == str {
+			return true
+		}
+	}
+
+    return false
+}
+
 func LogChat(username string, message string) {
 	if len(message) >= 70 {
 		return
@@ -21,7 +31,6 @@ func LogChat(username string, message string) {
 	}
 
 	msg := fmt.Sprintf("%s: %s", username, message)
-
 	err := os.WriteFile("/home/yoni/chat.txt", []byte(msg), 0600)
 
 	if err != nil {
